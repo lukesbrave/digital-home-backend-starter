@@ -29,53 +29,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-        background: '#0a0a0a',
-      }}
-    >
-      <form
-        onSubmit={handleLogin}
-        style={{
-          width: '100%',
-          maxWidth: '360px',
-          padding: '2.5rem',
-        }}
-      >
-        <div style={{ marginBottom: '2rem' }}>
-          <div
-            style={{
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              letterSpacing: '0.15em',
-              textTransform: 'uppercase',
-              color: '#f5f0e8',
-            }}
-          >
+    <div className="flex items-center justify-center min-h-screen bg-minimal-bg">
+      <form onSubmit={handleLogin} className="w-full max-w-[360px] px-10">
+        {/* Logo */}
+        <div className="mb-16">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white mb-6" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200Z" />
+          </svg>
+          <h1 className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400">
             Digital Home
-          </div>
-          <div
-            style={{
-              fontSize: '0.6rem',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: '#555',
-              marginTop: '0.15rem',
-            }}
-          >
-            Platform
-          </div>
+          </h1>
         </div>
 
-        <div style={{ marginBottom: '1.25rem' }}>
-          <label
-            htmlFor="email"
-            style={{ display: 'block', fontSize: '0.7rem', color: '#888', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-          >
+        {/* Email */}
+        <div className="mb-6">
+          <label htmlFor="email" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500 mb-2">
             Email
           </label>
           <input
@@ -84,24 +52,13 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '0.6rem 0.75rem',
-              background: '#111',
-              border: '1px solid #222',
-              borderRadius: '4px',
-              color: '#f5f0e8',
-              fontSize: '0.85rem',
-              outline: 'none',
-            }}
+            className="w-full bg-transparent border border-zinc-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500 transition-colors"
           />
         </div>
 
-        <div style={{ marginBottom: '1.5rem' }}>
-          <label
-            htmlFor="password"
-            style={{ display: 'block', fontSize: '0.7rem', color: '#888', marginBottom: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-          >
+        {/* Password */}
+        <div className="mb-8">
+          <label htmlFor="password" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500 mb-2">
             Password
           </label>
           <input
@@ -110,42 +67,28 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{
-              width: '100%',
-              padding: '0.6rem 0.75rem',
-              background: '#111',
-              border: '1px solid #222',
-              borderRadius: '4px',
-              color: '#f5f0e8',
-              fontSize: '0.85rem',
-              outline: 'none',
-            }}
+            className="w-full bg-transparent border border-zinc-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500 transition-colors"
           />
         </div>
 
+        {/* Error */}
         {error && (
-          <p style={{ color: '#ef4444', fontSize: '0.75rem', marginBottom: '1rem' }}>
-            {error}
-          </p>
+          <p className="text-red-500 text-xs mb-4">{error}</p>
         )}
 
+        {/* Submit */}
         <button
           type="submit"
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '0.6rem',
-            background: loading ? '#222' : '#f5f0e8',
-            color: loading ? '#555' : '#0a0a0a',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            cursor: loading ? 'default' : 'pointer',
-          }}
+          className="w-full py-2.5 bg-white text-black text-xs font-medium uppercase tracking-widest rounded-sm disabled:opacity-30 transition-opacity"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>
+
+        {/* Footer */}
+        <div className="mt-16 text-[9px] text-minimal-muted/40 uppercase tracking-widest text-center">
+          v0.1
+        </div>
       </form>
     </div>
   );

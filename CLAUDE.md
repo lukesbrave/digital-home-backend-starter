@@ -1,18 +1,18 @@
-# Digital Home Platform
+# Digital Home Backend
 
 ## What This Is
-The Digital Home Platform is the operating system behind a Digital Home. It's a standalone dashboard application that manages content, leads, email, analytics, and AI agents — replacing tools like GHL, HubSpot, and WordPress admin panels with a single, owned, agent-native system.
+The Digital Home Backend is the operating system behind a Digital Home. It's a standalone application that manages content, leads, email, analytics, and AI agents — replacing tools like GHL, HubSpot, and WordPress admin panels with a single, owned, agent-native system.
 
-The Platform connects to the same Supabase database as the Digital Home (the public-facing website). The Digital Home is the storefront. The Platform is the back office.
+The Backend connects to the same Supabase database as the Digital Home Frontend (the public-facing website). The Frontend is the storefront. The Backend is the back office.
 
-**Open-source ambition:** This platform is designed to be open-sourced. Any consultant or business can deploy their own Digital Home + Platform stack on their own infrastructure. BraveBrand's value is in the content corpus, agent prompts, implementation expertise, and community — not the platform code.
+**Open-source ambition:** This Backend is designed to be open-sourced. Any consultant or business can deploy their own Digital Home Frontend + Backend stack on their own infrastructure. BraveBrand's value is in the content corpus, agent prompts, implementation expertise, and community — not the code.
 
 ## Architecture
 
 ```
 ┌─────────────────────────┐     ┌─────────────────────────┐
-│     DIGITAL HOME        │     │     PLATFORM            │
-│  (Public Website)       │     │  (Dashboard/CRM)        │
+│     DIGITAL HOME        │     │     BACKEND             │
+│  (Public Website)       │     │  (Backend/CRM)          │
 │                         │     │                         │
 │  - Homepage             │     │  - Content Pipeline     │
 │  - Blog                 │     │  - Lead Management      │
@@ -20,7 +20,7 @@ The Platform connects to the same Supabase database as the Digital Home (the pub
 │  - Contact              │     │  - Analytics            │
 │  - API Routes           │     │  - Agent Oversight      │
 │                         │     │  - Knowledge Graph      │
-│  bravebrand.com         │     │  app.bravebrand.com     │
+│  bravebrand.com         │     │  backend.bravebrand.com  │
 └───────────┬─────────────┘     └───────────┬─────────────┘
             │                               │
             └───────────┬───────────────────┘
@@ -46,7 +46,7 @@ The Platform connects to the same Supabase database as the Digital Home (the pub
 - **Auth:** Supabase Auth (email/password, no public signup)
 - **Deployment:** Cloudflare Pages (separate deployment from the Digital Home)
 
-## Platform Modules
+## Backend Modules
 
 ### Module 1: Content Pipeline (built)
 - Content calendar with status pipeline (planned → approved → writing → draft → published → archived)
@@ -89,7 +89,7 @@ The Platform connects to the same Supabase database as the Digital Home (the pub
 
 ## Project Structure
 ```
-/digital-home-platform/
+/digital-home-backend/
   CLAUDE.md              ← You are here
   /src
     /app
@@ -120,15 +120,15 @@ API_SECRET_KEY                — API key for authenticating with Digital Home A
 - **Direct Supabase queries** for read operations (faster than going through the Digital Home API).
 - **Digital Home API** for write operations that need to trigger side effects (e.g., publishing content triggers SEO metadata generation).
 - **Dark theme only.** This is a professional dashboard, not a consumer app.
-- **database.ts must stay in sync** between the Platform and Digital Home. When the schema changes, update both.
+- **CRITICAL — Shared database types:** When you modify `src/types/database.ts` or add/change a Supabase migration, you MUST also update the same `src/types/database.ts` file in the Digital Home Frontend project (located at `../Digital Home 2.0/src/types/database.ts`). These two files must always be identical. After making changes, copy the updated file to the other project immediately.
 
 ## Decision Log
 
-### 2026-03-25 — Platform as separate app
-- **Decision:** Split the admin dashboard out of the Digital Home into a standalone Platform app
-- **Why:** The Digital Home is the client-facing storefront. The Platform is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Digital Home stays lean and fast, (2) the Platform can be open-sourced independently, (3) clients get two deployments — their public site and their private dashboard, (4) this is the digital sovereignty play — own the entire stack, replace GHL/HubSpot/WordPress.
+### 2026-03-25 — Dashboard as separate app
+- **Decision:** Split the admin dashboard out of the Digital Home into a standalone Dashboard app
+- **Why:** The Frontend is the client-facing storefront. The Backend is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Frontend stays lean and fast, (2) the Backend can be open-sourced independently, (3) clients get two deployments — their public site and their private backend, (4) this is the digital sovereignty play — own the entire stack, replace GHL/HubSpot/WordPress.
 - **Alternatives considered:** Admin pages inside the Digital Home. Rejected because it conflates the public-facing site with the back office, makes open-sourcing harder, and doesn't scale to a multi-module platform.
 
 ### 2026-03-25 — Open-source architecture
-- **Decision:** Design the Platform for open-source from day one
-- **Why:** BraveBrand's moat is the content corpus, agent prompts, implementation expertise, and community — not the platform code. Open-sourcing the Platform: (1) builds trust and authority, (2) creates a community of contributors, (3) makes BraveBrand the standard for AI-native digital infrastructure, (4) the "WordPress of the AI era" positioning.
+- **Decision:** Design the Dashboard for open-source from day one
+- **Why:** BraveBrand's moat is the content corpus, agent prompts, implementation expertise, and community — not the platform code. Open-sourcing the Dashboard: (1) builds trust and authority, (2) creates a community of contributors, (3) makes BraveBrand the standard for AI-native digital infrastructure, (4) the "WordPress of the AI era" positioning.
