@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  /* BraveBrand design tokens — shared with the Digital Home */
+  --color-cream: #f5f0e8;
+  --color-charcoal: #1a1a1a;
+  --color-ink: #0a0a0a;
+  --color-smoke: #2a2a2a;
+  --color-ash: #555555;
+  --color-mist: #999999;
+  --color-ghost: #cccccc;
+
+  /* Accent colours */
+  --color-accent-purple: #c084fc;
+  --color-accent-green: #34d399;
+  --color-accent-blue: #60a5fa;
+  --color-accent-amber: #fbbf24;
+  --color-accent-red: #ef4444;
+
+  /* Status colours */
+  --color-status-planned: #666666;
+  --color-status-approved: #c084fc;
+  --color-status-writing: #fbbf24;
+  --color-status-draft: #60a5fa;
+  --color-status-published: #34d399;
+  --color-status-archived: #555555;
+
+  /* Priority colours */
+  --color-priority-high: #ef4444;
+  --color-priority-medium: #f59e0b;
+  --color-priority-low: #6b7280;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-cream);
+  font-family: var(--font-sans, system-ui, -apple-system, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
