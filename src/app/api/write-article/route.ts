@@ -203,7 +203,9 @@ IMPORTANT RULES:
 - Reading level: 9th grade. Short sentences. Plain words.
 - Follow the banned phrases list strictly
 - Article length: 1,200-2,500 words
-- Output ONLY valid JSON — no markdown code fences, no commentary`;
+- Output ONLY valid JSON — no markdown code fences, no commentary
+- CRITICAL: In the "body" field, escape all double quotes inside HTML attributes using \\" so the JSON stays valid. For example: <a href=\\"https://example.com\\">text</a>
+- Do NOT include any text before or after the JSON object`;
 
     const userPrompt = `Write a full article for this topic:
 
@@ -268,7 +270,7 @@ Return a JSON object with EXACTLY these fields:
       message.content[0].type === "text" ? message.content[0].text : "";
 
     // Extract JSON from response (handle potential markdown wrapping)
-    let articleData: {
+    let articleData!: {
       title: string;
       slug: string;
       body: string;
@@ -288,10 +290,55 @@ Return a JSON object with EXACTLY these fields:
     };
 
     try {
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error("No JSON found in response");
-      articleData = JSON.parse(jsonMatch[0]);
-    } catch (parseError) {
+      // Strategy 1: Try parsing the full response as JSON directly
+      let parsed = false;
+      try {
+        articleData = JSON.parse(responseText.trim());
+        parsed = true;
+      } catch {
+        // Not pure JSON, try extraction
+      }
+
+      // Strategy 2: Extract JSON from markdown code fences
+      if (!parsed) {
+        const fenceMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+        if (fenceMatch) {
+          try {
+            articleData = JSON.parse(fenceMatch[1]);
+            parsed = true;
+          } catch {
+            // Fenced JSON also invalid
+          }
+        }
+      }
+
+      // Strategy 3: Find the outermost JSON object by bracket matching
+      if (!parsed) {
+        const startIdx = responseText.indexOf("{");
+        if (startIdx === -1) throw new Error("No JSON found in response");
+
+        let depth = 0;
+        let endIdx = -1;
+        let inString = false;
+        let escapeNext = false;
+
+        for (let i = startIdx; i < responseText.length; i++) {
+          const char = responseText[i];
+          if (escapeNext) { escapeNext = false; continue; }
+          if (char === "\\") { escapeNext = true; continue; }
+          if (char === '"') { inString = !inString; continue; }
+          if (inString) continue;
+          if (char === "{") depth++;
+          if (char === "}") { depth--; if (depth === 0) { endIdx = i; break; } }
+        }
+
+        if (endIdx === -1) throw new Error("No complete JSON object found in response");
+        articleData = JSON.parse(responseText.slice(startIdx, endIdx + 1));
+        parsed = true;
+      }
+
+      if (!parsed) throw new Error("Could not parse JSON from AI response");
+    } catch (parseError: unknown) {
       // Revert status
       await supabase
         .from("content_calendar")
