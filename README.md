@@ -91,6 +91,12 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 ### Full Documentation
 The `CLAUDE.md` file is the complete technical reference — architecture, modules, environment variables, Cloudflare rules, and conventions. Open Claude Code in this repo and it knows everything.
 
+## Community
+
+The Digital Home is built and maintained by [BraveBrand](https://bravebrand.co). The code is free and open-source — clone it, deploy it, make it yours.
+
+The part the code can't give you is the **brand intelligence** that makes it work: the content corpus process, the AI writing skills, and the strategy behind what to feed your agents so they sound like you instead of generic AI. That lives in the [BraveBrand community on Skool](https://www.skool.com/bravebrand/about), where you'll also find other founders building their own Digital Homes.
+
 ## Related
 
 - [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) — the public-facing storefront
