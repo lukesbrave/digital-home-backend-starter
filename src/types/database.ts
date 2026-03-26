@@ -936,6 +936,45 @@ export type Database = {
         };
         Relationships: [];
       };
+      backend_settings: {
+        Row: {
+          key: string;
+          value: Json;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          value: Json;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          value?: Json;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      brand_context: {
+        Row: {
+          key: string;
+          category: string;
+          content: string;
+          updated_at: string;
+        };
+        Insert: {
+          key: string;
+          category: string;
+          content: string;
+          updated_at?: string;
+        };
+        Update: {
+          key?: string;
+          category?: string;
+          content?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {};
     Functions: {};

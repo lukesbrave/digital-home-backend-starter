@@ -111,7 +111,7 @@ Topic context: ${keyword}`;
       quality: "standard",
     });
 
-    const imageUrl = response.data[0]?.url;
+    const imageUrl = response.data?.[0]?.url;
     if (!imageUrl) return null;
 
     // Download the image and upload to Supabase Storage

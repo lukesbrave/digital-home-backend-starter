@@ -282,10 +282,10 @@ function BoardView() {
     if (showLoader) setLoading(true);
     const { data } = await supabase
       .from('content_calendar')
-      .select('*, content_objects(slug, status)')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(200);
-    setEntries((data || []) as CalendarEntry[]);
+    setEntries((data || []) as unknown as CalendarEntry[]);
     if (showLoader) setLoading(false);
   }, [supabase]);
 
