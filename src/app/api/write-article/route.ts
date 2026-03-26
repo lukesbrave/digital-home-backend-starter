@@ -207,7 +207,7 @@ IMPORTANT RULES:
 - Follow the banned phrases list strictly
 - Article length: 1,200-2,500 words
 - Do NOT include the article title as an H1 or H2 at the start of the body — the website renders the title separately above the article. Start the body directly with the hook paragraph.
-- The CTA section MUST include a real clickable HTML link. Use <a href="/contact">Book a free strategy call</a> or link to the most relevant service page. Make the CTA a clear, specific action — not just "get in touch".
+- The CTA section MUST include a real clickable HTML link. Available site pages: /contact, /services, /about, /blog. Use <a href="/contact">Book a free strategy call</a> or <a href="/services">See how we build Digital Homes</a> depending on topic relevance. Make the CTA a clear, specific action — not just "get in touch". Do NOT link to pages that don't exist.
 - Output ONLY valid JSON — no markdown code fences, no commentary
 - CRITICAL: In the "body" field, escape all double quotes inside HTML attributes using \\" so the JSON stays valid. For example: <a href=\\"https://example.com\\">text</a>
 - Do NOT include any text before or after the JSON object`;
