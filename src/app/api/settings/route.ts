@@ -18,6 +18,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 
+export const runtime = 'edge';
+
 const DEFAULTS: Record<string, unknown> = {
   publish_mode: "safe",
 };
