@@ -15,7 +15,6 @@ import { createAdminClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
 
-export const runtime = 'edge';
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";

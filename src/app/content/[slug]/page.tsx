@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { RichEditor } from '@/components/rich-editor';
 
-export const runtime = 'edge';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
