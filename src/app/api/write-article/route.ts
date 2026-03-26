@@ -372,7 +372,15 @@ Return a JSON object with EXACTLY these fields:
           .update({ status: "approved" })
           .eq("id", calendar_entry_id);
         return NextResponse.json(
-          { error: "Failed to save article via Frontend API" },
+          {
+            error: "Failed to save article via Frontend API",
+            debug: {
+              frontend_url: FRONTEND_URL,
+              status: publishRes.status,
+              statusText: publishRes.statusText,
+              response: errData,
+            },
+          },
           { status: 500 }
         );
       }
