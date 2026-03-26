@@ -128,6 +128,23 @@ OPENAI_API_KEY                — OpenAI API key for DALL-E hero images
 DIGITAL_HOME_URL              — The public-facing Digital Home URL (e.g., https://yourdomain.com)
 ```
 
+**Common mistakes when setting secrets:**
+- When `wrangler secret put` prompts for a value, paste ONLY the value (e.g., `bravebrand-api-secret-key-2026`), NOT the variable name with it (e.g., NOT `API_SECRET_KEY=bravebrand-api-secret-key-2026`)
+- `DIGITAL_HOME_URL` must be the live Frontend URL (e.g., `https://home.yourdomain.com`), NOT `http://localhost:3000`
+- `API_SECRET_KEY` must be identical on both the Frontend and Backend Workers
+- The Frontend also needs its own secrets set via `wrangler secret put` — see the Frontend CLAUDE.md
+
+### Verifying API connectivity
+After setting all secrets, test the Backend→Frontend connection by visiting:
+```
+https://your-backend-url.com/api/test-frontend
+```
+This returns the Frontend URL, API key status, and whether the Frontend responds. Check:
+- `api_key_set` should be `true`
+- `api_key_preview` should show the first/last 4 chars of your key (not `NOT SET` or the variable name)
+- `status` should be `200`
+If `status` is `401`, the API key doesn't match between Backend and Frontend. Re-set it on both.
+
 ## Important Conventions
 - **Auth required on all pages** except `/login`. Middleware handles the redirect.
 - **No public signup.** Admin users are created directly in Supabase dashboard.
