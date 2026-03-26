@@ -562,7 +562,7 @@ function DraggableCard({
       {/* Meta row */}
       <div className="flex items-center gap-3 mb-1">
         {entry.priority && (
-          <div className={`w-1.5 h-1.5 rounded-full ${PRIORITY_DOTS[entry.priority]}`} title={entry.priority} />
+          <div className={`w-1.5 h-1.5 rounded-full ${entry.status === 'published' ? STATUS_DOT_COLORS.published : PRIORITY_DOTS[entry.priority]}`} title={entry.status === 'published' ? 'published' : entry.priority} />
         )}
         {entry.target_keyword ? (
           <span className="text-[10px] uppercase tracking-wider text-minimal-muted">
