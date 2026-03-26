@@ -1,6 +1,6 @@
 # Digital Home Backend
 
-The operating system behind a Digital Home — an open-source backend that manages content, leads, email, analytics, and AI agents. It replaces the admin panels of WordPress, GoHighLevel, and HubSpot with a single, owned, agent-native system.
+The operating system behind a Digital Home — an open-source backend that manages content, leads, email, analytics, and AI agents. A single, owned, agent-native system — no platform lock-in, no monthly SaaS fees for features you could own.
 
 This is the **Backend** (the operating system). Behind every [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) (the public-facing website), this Backend handles everything that happens behind the scenes. Both share the same Supabase database.
 

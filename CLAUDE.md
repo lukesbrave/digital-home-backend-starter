@@ -1,7 +1,7 @@
 # Digital Home Backend
 
 ## What This Is
-The Digital Home Backend is the operating system behind a Digital Home. It's a standalone application that manages content, leads, email, analytics, and AI agents — replacing tools like GHL, HubSpot, and WordPress admin panels with a single, owned, agent-native system.
+The Digital Home Backend is the operating system behind a Digital Home. It's a standalone application that manages content, leads, email, analytics, and AI agents — replacing rented SaaS admin panels with a single, owned, agent-native system.
 
 The Backend connects to the same Supabase database as the Digital Home Frontend (the public-facing website). The Frontend is the storefront. The Backend is the back office.
 
@@ -60,20 +60,20 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 - Lead pipeline from the Digital Home's email capture forms
 - Lead scoring based on visitor behavior
 - Segment management
-- Replaces GHL contacts/pipeline
+- Replaces rented CRM contacts/pipeline
 
 ### Module 3: Email Sequences (planned)
 - Sequence builder and management
 - Send history and analytics
 - Uses Resend API (same as the Digital Home)
-- Replaces GHL email/automations
+- Replaces rented email/automation platforms
 
 ### Module 4: Analytics (planned)
 - Visitor analytics dashboard
 - Content performance metrics
 - Conversion tracking
 - AI traffic reporting
-- Replaces GHL reporting
+- Replaces rented analytics dashboards
 
 ### Module 5: Agent Oversight (planned)
 - Agent activity logs and audit trail
@@ -190,7 +190,7 @@ Server-side secrets (`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc.) mus
 
 ### Dashboard as separate app
 - **Decision:** Split the admin dashboard out of the Digital Home into a standalone Backend app
-- **Why:** The Frontend is the client-facing storefront. The Backend is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Frontend stays lean and fast, (2) the Backend can be open-sourced independently, (3) every deployment gets two apps — public site + private backend, (4) own the entire stack, replace GHL/HubSpot/WordPress.
+- **Why:** The Frontend is the client-facing storefront. The Backend is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Frontend stays lean and fast, (2) the Backend can be open-sourced independently, (3) every deployment gets two apps — public site + private backend, (4) own the entire stack, replace rented platforms with owned infrastructure.
 - **Alternatives considered:** Admin pages inside the Digital Home. Rejected because it conflates the public-facing site with the back office, makes open-sourcing harder, and doesn't scale to a multi-module platform.
 
 ### Open-source architecture
