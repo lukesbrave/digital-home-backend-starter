@@ -6,3 +6,4 @@ export default nextConfig;
 
 import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
 // rebuild trigger
+// env fix
