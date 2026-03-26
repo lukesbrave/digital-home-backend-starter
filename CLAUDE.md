@@ -44,7 +44,7 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 - **Styling:** Tailwind CSS v4
 - **Database:** Supabase (PostgreSQL) — shared with the Digital Home
 - **Auth:** Supabase Auth (email/password, no public signup)
-- **Deployment:** Cloudflare Pages (separate deployment from the Digital Home)
+- **Deployment:** Cloudflare Workers via `@opennextjs/cloudflare` (OpenNext) — separate deployment from the Digital Home
 
 ## Backend Modules
 
@@ -106,12 +106,26 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 ```
 
 ## Environment Variables
+
+There are two types of environment variables. Getting this wrong is the most common deployment issue.
+
+### Build-time public variables
+These are baked into JavaScript at build time. They go in the Cloudflare dashboard (Settings > Variables & Secrets) AND in `wrangler.jsonc` under `vars`:
 ```
-NEXT_PUBLIC_SUPABASE_URL     — Supabase project URL (same as Digital Home)
+NEXT_PUBLIC_SUPABASE_URL      — Supabase project URL (same as Digital Home)
 NEXT_PUBLIC_SUPABASE_ANON_KEY — Supabase anon key (same as Digital Home)
-SUPABASE_SERVICE_ROLE_KEY     — Service role key (same as Digital Home)
-DIGITAL_HOME_URL              — The public-facing Digital Home URL
-API_SECRET_KEY                — API key for authenticating with Digital Home API routes
+```
+
+### Server-side secrets
+These MUST be set using `wrangler secret put` from the terminal. The Cloudflare dashboard UI does NOT work for Workers secrets — only for Pages projects.
+```
+SUPABASE_SERVICE_ROLE_KEY     — Service role key, bypasses RLS (same as Digital Home)
+SUPABASE_ANON_KEY             — Duplicate of anon key for server-side access (Workers can't read NEXT_PUBLIC_ at runtime)
+SUPABASE_URL                  — Duplicate of Supabase URL for server-side access (same reason)
+API_SECRET_KEY                — Shared secret between Frontend and Backend (must match both)
+ANTHROPIC_API_KEY             — Anthropic API key for AI article writing
+OPENAI_API_KEY                — OpenAI API key for DALL-E hero images
+DIGITAL_HOME_URL              — The public-facing Digital Home URL (e.g., https://yourdomain.com)
 ```
 
 ## Important Conventions
@@ -121,6 +135,39 @@ API_SECRET_KEY                — API key for authenticating with Digital Home A
 - **Digital Home API** for write operations that need to trigger side effects (e.g., publishing content triggers SEO metadata generation).
 - **Dark theme only.** This is a professional dashboard, not a consumer app.
 - **CRITICAL — Shared database types:** When you modify `src/types/database.ts` or add/change a Supabase migration, you MUST also update the same `src/types/database.ts` file in the Digital Home Frontend project (located at `../Digital Home 2.0/src/types/database.ts`). These two files must always be identical. After making changes, copy the updated file to the other project immediately.
+
+## Cloudflare / OpenNext Rules
+
+This project runs on Cloudflare Workers via `@opennextjs/cloudflare` (OpenNext). The older `@cloudflare/next-on-pages` adapter is **deprecated and incompatible**. If you see `next-on-pages` in tutorials, ignore it — the two systems want opposite things. These rules prevent build failures:
+
+### NEVER add edge runtime exports
+Do **not** add `export const runtime = 'edge'` to any route file. OpenNext handles runtime assignment itself and **rejects** manual edge runtime exports. This is the #1 cause of broken builds. Old Cloudflare tutorials recommend this pattern — it does not apply here.
+
+### NEXT_PUBLIC_ vars don't exist at runtime on Workers
+Cloudflare Workers can only read `NEXT_PUBLIC_` variables at build time (they're baked into the JS bundle). At runtime on the server, they're `undefined`. This is why:
+- `wrangler.jsonc` has both `SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_URL` in `vars`
+- `src/lib/supabase/server.ts` uses the fallback pattern: `process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL`
+- When creating new server-side code that reads env vars, always use this fallback pattern for any `NEXT_PUBLIC_` variable
+
+### Always run `npm run build` before pushing
+`next dev` does not catch all TypeScript errors. `next build` does. Always build locally before pushing to catch errors that would fail the Cloudflare build.
+
+### New Supabase tables must be in the types file
+If you add a new table to Supabase but don't add it to `src/types/database.ts`, the production build will fail with TypeScript errors. Either add the table to the types file or use `as any` as a temporary escape hatch.
+
+### Build artifacts must stay out of git
+These directories are generated during builds and must never be committed:
+```
+.vercel/
+.open-next/
+.wrangler/
+```
+
+### The build command is `npm run build`
+Do **not** use `npx @cloudflare/next-on-pages@1` or any other build command. Wrangler's deploy step handles the OpenNext conversion automatically after a standard Next.js build.
+
+### Secrets must be set via Wrangler CLI
+Server-side secrets (`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc.) must be set using `wrangler secret put`. The Cloudflare dashboard UI only works for Pages projects, not Workers. Secrets set via Wrangler take effect immediately without a rebuild.
 
 ## Decision Log
 
