@@ -72,11 +72,14 @@ async function generateHeroImage(
   try {
     const openai = new OpenAI();
 
-    const imagePrompt = `Create a minimal, abstract editorial hero image for a blog article titled "${title}".
-Dark background (#000000 to #0a0a0a). Subtle geometric shapes, flowing lines, or abstract forms in muted emerald green and white tones.
-The mood should be sophisticated, premium, and tech-forward. No text, no words, no letters, no people, no faces.
-Think: editorial design meets abstract art. Clean, minimal, high-end.
-Topic context: ${keyword}`;
+    const imagePrompt = `Editorial hero image for a premium business blog article.
+Style: High-end magazine editorial photography. Think Bloomberg Businessweek or Monocle magazine covers.
+Scene: A cinematic, atmospheric photograph related to the concept of "${keyword}". Use real-world objects, textures, or environments — not abstract shapes.
+Examples of good scenes: a dimly lit workspace with a single monitor glowing, an architectural detail shot of a modern building, a close-up of hands on a keyboard with dramatic lighting, a bird's-eye view of a city grid at dusk.
+Color palette: Deep blacks, warm amber accents, cool blue-grey tones. Cinematic color grading.
+Mood: Confident, authoritative, premium. Like the opening shot of a documentary about disruptive founders.
+STRICT: No text, no words, no letters, no logos, no people's faces. No generic stock photo vibes. No AI-looking renders.
+Topic context: ${title}`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
@@ -203,6 +206,8 @@ IMPORTANT RULES:
 - Reading level: 9th grade. Short sentences. Plain words.
 - Follow the banned phrases list strictly
 - Article length: 1,200-2,500 words
+- Do NOT include the article title as an H1 or H2 at the start of the body — the website renders the title separately above the article. Start the body directly with the hook paragraph.
+- The CTA section MUST include a real clickable HTML link. Use <a href="/contact">Book a free strategy call</a> or link to the most relevant service page. Make the CTA a clear, specific action — not just "get in touch".
 - Output ONLY valid JSON — no markdown code fences, no commentary
 - CRITICAL: In the "body" field, escape all double quotes inside HTML attributes using \\" so the JSON stays valid. For example: <a href=\\"https://example.com\\">text</a>
 - Do NOT include any text before or after the JSON object`;
