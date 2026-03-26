@@ -32,6 +32,6 @@
   "vars": {
     "SUPABASE_URL": "https://your-project.supabase.co",
     "NEXT_PUBLIC_SUPABASE_URL": "https://your-project.supabase.co",
-    "DIGITAL_HOME_URL": "https://digital-home-frontend.luke-9ffworkersdev.workers.dev"
+    "DIGITAL_HOME_URL": "https://yourdomain.com"
   }
 }
