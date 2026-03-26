@@ -14,8 +14,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
-import { readFile } from "fs/promises";
-import { join } from "path";
+
+export const runtime = 'edge';
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
@@ -33,33 +33,9 @@ async function loadBrandContext(): Promise<string> {
     .select("key, category, content")
     .order("category");
 
-  if (dbContext && dbContext.length > 0) {
-    return dbContext
-      .map((row) => `# ${row.category}/${row.key}\n\n${row.content}`)
-      .join("\n\n---\n\n");
-  }
-
-  // Fallback: read from filesystem (local development)
-  const corpusRoot = join(process.cwd(), "..", "Digital Home 2.0", "content-corpus");
-  const files = [
-    { label: "Brand Voice Guide", path: "voice/voice-guide.md" },
-    { label: "Banned Phrases", path: "voice/banned-phrases.md" },
-    { label: "Core Positioning", path: "positioning/core-positioning.md" },
-    { label: "Offer Architecture", path: "positioning/offers.md" },
-    { label: "SEO Keyword Clusters", path: "seo/keyword-clusters.md" },
-  ];
-
-  const sections: string[] = [];
-  for (const file of files) {
-    try {
-      const content = await readFile(join(corpusRoot, file.path), "utf-8");
-      if (content) sections.push(`# ${file.label}\n\n${content}`);
-    } catch {
-      // File not found — skip
-    }
-  }
-
-  return sections.join("\n\n---\n\n");
+  return (dbContext || [])
+    .map((row) => `# ${row.category}/${row.key}\n\n${row.content}`)
+    .join("\n\n---\n\n");
 }
 
 // ─── Fetch existing articles for internal linking ────────────────────────────
