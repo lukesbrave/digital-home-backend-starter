@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/browser';
 import Link from 'next/link';
+import { WritingGlow } from '@/components/ui/writing-glow';
 import {
   DndContext,
   DragOverlay,
@@ -538,12 +539,13 @@ function DraggableCard({
       ref={setNodeRef}
       style={style}
       {...(canDrag ? { ...attributes, ...listeners } : {})}
-      className={`group border p-5 transition-colors bg-minimal-row ${
+      className={`group relative border rounded-lg p-5 transition-colors bg-minimal-row ${
         isDragging ? 'dragging-card' : ''
       } ${
-        isWriting ? 'writing-glow' : 'border-minimal-border hover:border-minimal-muted'
+        isWriting ? 'border-transparent' : 'border-minimal-border hover:border-minimal-muted'
       } ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
     >
+      {isWriting && <WritingGlow />}
       {/* Title — clickable link to editor if article exists */}
       {entry.content_objects?.slug ? (
         <Link href={`/content/${entry.content_objects.slug}`} className="block">

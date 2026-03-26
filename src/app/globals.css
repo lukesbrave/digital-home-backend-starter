@@ -53,14 +53,55 @@ a {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* AI Writing glow animation */
-.writing-glow {
-  animation: borderGlow 2.5s ease-in-out infinite;
-  border-color: rgba(16, 185, 129, 0.15);
+/* AI Writing glow — auto-rotating emerald border */
+@property --glow-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
 }
-@keyframes borderGlow {
-  0%, 100% { border-color: rgba(16, 185, 129, 0.1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  50% { border-color: rgba(16, 185, 129, 0.35); box-shadow: 0 0 12px 0 rgba(16, 185, 129, 0.08); }
+
+.writing-glow-border {
+  padding: 2px;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0%,
+    #10b981 10%,
+    #34d399 20%,
+    transparent 30%,
+    transparent 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  mask:
+    linear-gradient(#000, #000) content-box,
+    linear-gradient(#000, #000);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: glowSpin 3s linear infinite;
+}
+
+/* Outer soft glow */
+.writing-glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--glow-angle),
+    transparent 0%,
+    rgba(16, 185, 129, 0.15) 10%,
+    rgba(52, 211, 153, 0.1) 20%,
+    transparent 30%,
+    transparent 100%
+  );
+  filter: blur(8px);
+  animation: glowSpin 3s linear infinite;
+  z-index: -1;
+}
+
+@keyframes glowSpin {
+  to { --glow-angle: 360deg; }
 }
 
 /* Drag-and-drop */
