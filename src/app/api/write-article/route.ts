@@ -72,14 +72,13 @@ async function generateHeroImage(
   try {
     const openai = new OpenAI();
 
-    const imagePrompt = `Editorial hero image for a premium business blog article.
-Style: High-end magazine editorial photography. Think Bloomberg Businessweek or Monocle magazine covers.
-Scene: A cinematic, atmospheric photograph related to the concept of "${keyword}". Use real-world objects, textures, or environments — not abstract shapes.
-Examples of good scenes: a dimly lit workspace with a single monitor glowing, an architectural detail shot of a modern building, a close-up of hands on a keyboard with dramatic lighting, a bird's-eye view of a city grid at dusk.
-Color palette: Deep blacks, warm amber accents, cool blue-grey tones. Cinematic color grading.
-Mood: Confident, authoritative, premium. Like the opening shot of a documentary about disruptive founders.
-STRICT: No text, no words, no letters, no logos, no people's faces. No generic stock photo vibes. No AI-looking renders.
-Topic context: ${title}`;
+    const imagePrompt = `Retro-futuristic cosmic illustration for a blog article about "${title}".
+Style: Analog film grain texture, like 35mm photography or risograph printing. NOT clean digital art. NOT polished CGI. Think retro sci-fi book covers meets cosmic psychedelia.
+Scene: A lone human silhouette or figure (seen from behind, no visible face) interacting with a vast cosmic or digital force — swirling galaxies, cascading light streams, glowing data vortexes, luminous grid planes, or radiant energy fields. The human is small against an immense, awe-inspiring environment.
+Color palette: Deep black background with vivid, luminous colors — choose ONE dominant palette per image: electric cyan/teal, fiery red/amber/gold, or neon green/emerald. Add scattered pinpoints of light like stars or data particles.
+Texture: Heavy film grain, slight color bleeding at edges, analog warmth. Should feel like a vintage National Geographic photo that was double-exposed with a Hubble telescope image.
+Mood: Awe, possibility, the frontier between human and technology. Epic but intimate.
+ABSOLUTELY NO TEXT. No words. No letters. No numbers. No logos. No watermarks. No signatures. Nothing that could be read as writing.`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
