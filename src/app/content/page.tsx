@@ -282,7 +282,7 @@ function BoardView() {
     if (showLoader) setLoading(true);
     const { data } = await supabase
       .from('content_calendar')
-      .select('*')
+      .select('*, content_objects:content_object_id(slug, status)')
       .order('created_at', { ascending: false })
       .limit(200);
     setEntries((data || []) as unknown as CalendarEntry[]);
@@ -552,7 +552,7 @@ function DraggableCard({
           </p>
         </Link>
       ) : (
-        <p className="text-[14px] leading-relaxed mb-3 font-light text-minimal-muted">
+        <p className="text-[14px] leading-relaxed mb-3 font-light">
           {entry.title}
         </p>
       )}
