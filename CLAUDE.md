@@ -5,7 +5,7 @@ The Digital Home Backend is the operating system behind a Digital Home. It's a s
 
 The Backend connects to the same Supabase database as the Digital Home Frontend (the public-facing website). The Frontend is the storefront. The Backend is the back office.
 
-**Open-source ambition:** This Backend is designed to be open-sourced. Any consultant or business can deploy their own Digital Home Frontend + Backend stack on their own infrastructure. BraveBrand's value is in the content corpus, agent prompts, implementation expertise, and community — not the code.
+**Open-source:** Any consultant or business can deploy their own Digital Home Frontend + Backend stack on their own infrastructure. The value is in your content corpus, agent prompts, and implementation expertise — not the platform code.
 
 ## Architecture
 
@@ -20,7 +20,7 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 │  - Contact              │     │  - Analytics            │
 │  - API Routes           │     │  - Agent Oversight      │
 │                         │     │  - Knowledge Graph      │
-│  bravebrand.com         │     │  backend.bravebrand.com  │
+│  yourdomain.com         │     │  backend.yourdomain.com  │
 └───────────┬─────────────┘     └───────────┬─────────────┘
             │                               │
             └───────────┬───────────────────┘
@@ -129,8 +129,8 @@ DIGITAL_HOME_URL              — The public-facing Digital Home URL (e.g., http
 ```
 
 **Common mistakes when setting secrets:**
-- When `wrangler secret put` prompts for a value, paste ONLY the value (e.g., `bravebrand-api-secret-key-2026`), NOT the variable name with it (e.g., NOT `API_SECRET_KEY=bravebrand-api-secret-key-2026`)
-- `DIGITAL_HOME_URL` must be the live Frontend URL (e.g., `https://home.yourdomain.com`), NOT `http://localhost:3000`
+- When `wrangler secret put` prompts for a value, paste ONLY the value (e.g., `my-api-secret-key`), NOT the variable name with it (e.g., NOT `API_SECRET_KEY=my-api-secret-key`)
+- `DIGITAL_HOME_URL` must be the live Frontend URL (e.g., `https://yourdomain.com`), NOT `http://localhost:3000`
 - `API_SECRET_KEY` must be identical on both the Frontend and Backend Workers
 - The Frontend also needs its own secrets set via `wrangler secret put` — see the Frontend CLAUDE.md
 
@@ -188,11 +188,11 @@ Server-side secrets (`SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc.) mus
 
 ## Decision Log
 
-### 2026-03-25 — Dashboard as separate app
-- **Decision:** Split the admin dashboard out of the Digital Home into a standalone Dashboard app
-- **Why:** The Frontend is the client-facing storefront. The Backend is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Frontend stays lean and fast, (2) the Backend can be open-sourced independently, (3) clients get two deployments — their public site and their private backend, (4) this is the digital sovereignty play — own the entire stack, replace GHL/HubSpot/WordPress.
+### Dashboard as separate app
+- **Decision:** Split the admin dashboard out of the Digital Home into a standalone Backend app
+- **Why:** The Frontend is the client-facing storefront. The Backend is the operating system — content management, lead tracking, email, analytics, agent oversight. Keeping them separate means: (1) the Frontend stays lean and fast, (2) the Backend can be open-sourced independently, (3) every deployment gets two apps — public site + private backend, (4) own the entire stack, replace GHL/HubSpot/WordPress.
 - **Alternatives considered:** Admin pages inside the Digital Home. Rejected because it conflates the public-facing site with the back office, makes open-sourcing harder, and doesn't scale to a multi-module platform.
 
-### 2026-03-25 — Open-source architecture
-- **Decision:** Design the Dashboard for open-source from day one
-- **Why:** BraveBrand's moat is the content corpus, agent prompts, implementation expertise, and community — not the platform code. Open-sourcing the Dashboard: (1) builds trust and authority, (2) creates a community of contributors, (3) makes BraveBrand the standard for AI-native digital infrastructure, (4) the "WordPress of the AI era" positioning.
+### Open-source architecture
+- **Decision:** Design the Backend for open-source from day one
+- **Why:** The moat is the content corpus, agent prompts, and implementation expertise — not the platform code. Open-sourcing: (1) builds trust and authority, (2) creates a community of contributors, (3) establishes the standard for AI-native digital infrastructure.
