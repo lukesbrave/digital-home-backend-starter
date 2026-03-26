@@ -69,17 +69,42 @@ There is no public signup. Create your admin user manually:
 
 ## Step 4: Environment Variables
 
-Go to your Cloudflare project > Settings > Variables & Secrets. Add the following:
+There are two types of environment variables. Getting this wrong is the most common deployment issue.
+
+### Public variables (baked into JavaScript at build time)
+
+These go in the Cloudflare dashboard (Settings > Variables & Secrets) AND in `wrangler.jsonc` under `vars`:
 
 | Variable | Description |
 |----------|-------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (keep secret) |
-| `DIGITAL_HOME_URL` | Your public frontend URL (e.g., `https://yourdomain.com`) |
-| `API_SECRET_KEY` | Shared secret between Frontend and Backend (must match both projects) |
+
+These are safe to expose — they are restricted by Row Level Security.
+
+### Server-side secrets (must be set via Wrangler CLI)
+
+These MUST be set using `wrangler secret put` from your terminal. The Cloudflare dashboard UI does NOT work for Workers — only for Pages projects. This is the most common gotcha.
+
+```bash
+echo "your-value" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+echo "your-value" | npx wrangler secret put SUPABASE_ANON_KEY
+echo "your-value" | npx wrangler secret put API_SECRET_KEY
+echo "your-value" | npx wrangler secret put ANTHROPIC_API_KEY
+echo "your-value" | npx wrangler secret put OPENAI_API_KEY
+echo "your-value" | npx wrangler secret put DIGITAL_HOME_URL
+```
+
+| Secret | Description |
+|--------|-------------|
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (bypasses RLS) |
+| `SUPABASE_ANON_KEY` | Duplicate of the anon key for server-side access |
+| `API_SECRET_KEY` | Shared secret between Frontend and Backend (must match both) |
 | `ANTHROPIC_API_KEY` | Anthropic API key for AI article writing |
 | `OPENAI_API_KEY` | OpenAI API key for DALL-E hero images |
+| `DIGITAL_HOME_URL` | Your public frontend URL (e.g., `https://yourdomain.com`) |
+
+Secrets set via Wrangler take effect immediately — no rebuild needed.
 
 ## Step 5: Seed Brand Context
 
