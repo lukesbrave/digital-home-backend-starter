@@ -544,15 +544,15 @@ function DraggableCard({
         isWriting ? 'writing-glow' : 'border-minimal-border hover:border-minimal-muted'
       } ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
     >
-      {/* Click to open article if it exists */}
+      {/* Title — clickable link to editor if article exists */}
       {entry.content_objects?.slug ? (
-        <Link href={`/content/${entry.content_objects.slug}`}>
-          <p className="text-[14px] leading-relaxed mb-3 font-light hover:text-white transition-colors">
+        <Link href={`/content/${entry.content_objects.slug}`} className="block">
+          <p className="text-[14px] leading-relaxed mb-3 font-light hover:text-white transition-colors underline-offset-4 hover:underline">
             {entry.title}
           </p>
         </Link>
       ) : (
-        <p className="text-[14px] leading-relaxed mb-3 font-light">
+        <p className="text-[14px] leading-relaxed mb-3 font-light text-minimal-muted">
           {entry.title}
         </p>
       )}
@@ -583,9 +583,13 @@ function DraggableCard({
         </div>
       )}
 
-      {/* Hover actions (secondary to drag-and-drop) */}
+      {/* Actions — always visible for draft/published, hover for planned/approved */}
       {!isWriting && (
-        <div className="flex gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className={`flex gap-2 mt-3 transition-opacity ${
+          entry.status === 'draft' || entry.status === 'published'
+            ? 'opacity-100'
+            : 'opacity-0 group-hover:opacity-100'
+        }`}>
           {entry.status === 'planned' && (
             <button
               onClick={(e) => { e.stopPropagation(); onApprove(); }}
