@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   // Filter by status
   const status = searchParams.get("status");
   if (status) {
-    query = query.eq("status", status);
+    query = query.eq("status", status as "published" | "draft" | "archived");
   }
 
   // Search by title
