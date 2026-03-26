@@ -172,9 +172,9 @@ export default function ArticleEditorPage() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
         <p className="text-minimal-muted text-sm">Article not found</p>
-        <Link href="/content" className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors">
+        <button onClick={() => router.back()} className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors">
           ← Back
-        </Link>
+        </button>
       </div>
     );
   }
@@ -209,12 +209,12 @@ export default function ArticleEditorPage() {
       <header className="h-14 px-12 flex items-center justify-between border-b border-minimal-border shrink-0">
         {/* Left: back + status */}
         <div className="flex items-center gap-6">
-          <Link href="/content" className="text-minimal-muted hover:text-white transition-colors flex items-center gap-2">
+          <button onClick={() => router.back()} className="text-minimal-muted hover:text-white transition-colors flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
               <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z" />
             </svg>
-            <span className="text-[10px] font-medium uppercase tracking-widest">Pipeline</span>
-          </Link>
+            <span className="text-[10px] font-medium uppercase tracking-widest">Back</span>
+          </button>
           <div className="h-4 w-px bg-minimal-border" />
           <div className="flex items-center gap-2">
             <div className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[article.status]}`} />
