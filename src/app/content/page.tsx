@@ -35,7 +35,7 @@ type CalendarEntry = {
   created_by: string;
   notes: string | null;
   created_at: string;
-  content_objects: { slug: string; status: string } | null;
+  content_objects: { slug: string; status: string; published_at: string | null } | null;
 };
 
 type Article = {
@@ -70,7 +70,7 @@ const PRIORITY_DOTS: Record<string, string> = {
   low: 'bg-minimal-muted',
 };
 
-const DIGITAL_HOME_URL = process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || '';
+const DIGITAL_HOME_URL = process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || 'https://yourdomain.com';
 
 // Valid drag-and-drop transitions
 const VALID_MOVES: Record<string, string[]> = {
@@ -283,7 +283,7 @@ function BoardView() {
     if (showLoader) setLoading(true);
     const { data } = await supabase
       .from('content_calendar')
-      .select('*, content_objects:content_object_id(slug, status)')
+      .select('*, content_objects:content_object_id(slug, status, published_at)')
       .order('created_at', { ascending: false })
       .limit(200);
     setEntries((data || []) as unknown as CalendarEntry[]);
@@ -533,6 +533,7 @@ function DraggableCard({
 
   const isWriting = entry.status === 'writing' || writing === entry.id;
   const isBeingWritten = writing === entry.id;
+  const isNew = isRecentlyPublished(entry);
 
   return (
     <div
@@ -542,10 +543,16 @@ function DraggableCard({
       className={`group relative border rounded-lg p-5 transition-colors bg-minimal-row ${
         isDragging ? 'dragging-card' : ''
       } ${
-        isWriting ? 'border-transparent' : 'border-minimal-border hover:border-minimal-muted'
+        isNew ? 'border-green-500/30' : isWriting ? 'border-transparent' : 'border-minimal-border hover:border-minimal-muted'
       } ${canDrag ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'}`}
     >
       {isWriting && <WritingGlow />}
+      {/* NEW badge for recently published articles */}
+      {isNew && (
+        <span className="absolute top-3 right-3 text-[9px] font-semibold uppercase tracking-widest text-green-500 bg-green-500/10 px-2 py-0.5 rounded-sm">
+          New
+        </span>
+      )}
       {/* Title — clickable link to editor if article exists */}
       {entry.content_objects?.slug ? (
         <Link href={`/content/${entry.content_objects.slug}`} className="block">
@@ -711,6 +718,14 @@ function ListView() {
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function isRecentlyPublished(entry: CalendarEntry): boolean {
+  if (entry.status !== 'published') return false;
+  const publishedAt = entry.content_objects?.published_at;
+  if (!publishedAt) return false;
+  const tenMinutes = 10 * 60 * 1000;
+  return Date.now() - new Date(publishedAt).getTime() < tenMinutes;
+}
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime();
