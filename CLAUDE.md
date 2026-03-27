@@ -23,6 +23,8 @@ Fill in:
 ### Step 3: Seed Your Brand Context
 Your brand context is what makes the AI write in your voice. First, fill in your content corpus files (see the Frontend's `content-corpus-examples/` for the format). Then seed them into Supabase by sending a POST request to `/api/setup` with your brand data.
 
+> **⚠️ This is the most important step.** The content corpus is what separates AI that writes like you from AI that writes generic slop. A properly built corpus includes: voice guide, tone examples, content hooks, core positioning, offer architecture, competitive landscape, SEO keyword clusters, and case studies/testimonials. If you haven't completed your content corpus in the Frontend setup, do that first. A structured brand intake process and content corpus skill are available in the [BraveBrand community](https://www.skool.com/bravebrand).
+
 You also need two special entries in the `brand_context` table:
 
 **CTA Links** — the links the AI will use in article CTAs:
