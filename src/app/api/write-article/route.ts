@@ -191,8 +191,7 @@ export async function POST(request: NextRequest) {
       .from("content_calendar")
       .select("id")
       .eq("status", "approved")
-      .order("priority", { ascending: true })
-      .order("publish_date", { ascending: true })
+      .order("created_at", { ascending: true })
       .limit(1)
       .single();
 
