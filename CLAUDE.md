@@ -124,7 +124,7 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 - Publishing mode toggle (safe = drafts for review, autonomous = auto-publish)
 - Bulk approve/archive actions
 - Connects to Claude Code skills: `/content-strategy`, `/write-article`, `/trend-scan`
-- GitHub Actions for daily publishing and weekly trend scanning
+- GitHub Actions for daily publishing and weekly trend scanning — **Note:** The workflow files live in the Frontend repo (`.github/workflows/`), not here. They call the Backend's `/api/write-article` route. See the Frontend CLAUDE.md Step 9 for setup instructions.
 
 ### Module 2: Lead Management (planned)
 - Lead pipeline from the Digital Home's email capture forms
