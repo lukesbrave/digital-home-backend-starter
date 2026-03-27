@@ -26,6 +26,7 @@ interface BrandContext {
   fullContext: string;
   ctaLinks: string;
   authorName: string;
+  imageStyle: string;
 }
 
 async function loadBrandContext(): Promise<BrandContext> {
@@ -50,7 +51,11 @@ async function loadBrandContext(): Promise<BrandContext> {
   const authorRow = rows.find((r) => r.category === "identity" && r.key === "author");
   const authorName = authorRow?.content?.trim() || "Content Agent";
 
-  return { fullContext, ctaLinks, authorName };
+  // Extract image style from brand context (category: "content", key: "image_style")
+  const imageRow = rows.find((r) => r.category === "content" && r.key === "image_style");
+  const imageStyle = imageRow?.content?.trim() || "";
+
+  return { fullContext, ctaLinks, authorName, imageStyle };
 }
 
 // ─── Fetch existing articles for internal linking ────────────────────────────
@@ -81,27 +86,38 @@ async function fetchPublishedSlugs(): Promise<
 async function generateHeroImage(
   title: string,
   keyword: string,
-  slug: string
+  slug: string,
+  imageStyle?: string
 ): Promise<string | null> {
   if (!process.env.OPENAI_API_KEY) return null;
 
   try {
     const openai = new OpenAI();
 
-    const imagePrompt = `Retro-futuristic cosmic illustration for a blog article about "${title}".
-Style: Analog film grain texture, like 35mm photography or risograph printing. NOT clean digital art. NOT polished CGI. Think retro sci-fi book covers meets cosmic psychedelia.
-Scene: A lone human silhouette or figure (seen from behind, no visible face) interacting with a vast cosmic or digital force — swirling galaxies, cascading light streams, glowing data vortexes, luminous grid planes, or radiant energy fields. The human is small against an immense, awe-inspiring environment.
-Color palette: Deep black background with vivid, luminous colors — choose ONE dominant palette per image: electric cyan/teal, fiery red/amber/gold, or neon green/emerald. Add scattered pinpoints of light like stars or data particles.
-Texture: Heavy film grain, slight color bleeding at edges, analog warmth. Should feel like a vintage National Geographic photo that was double-exposed with a Hubble telescope image.
-Mood: Awe, possibility, the frontier between human and technology. Epic but intimate.
-ABSOLUTELY NO TEXT. No words. No letters. No numbers. No logos. No watermarks. No signatures. Nothing that could be read as writing.`;
+    // Default style if none configured in brand_context
+    const defaultStyle = `Editorial photography style. Clean, modern, professional.
+Composition: Minimal, intentional. One clear subject or metaphor that relates to the article topic.
+Color palette: Muted, sophisticated tones with one accent color. Think Harvard Business Review or Fast Company covers.
+Lighting: Natural, cinematic. Soft shadows, depth of field.
+Mood: Confident, authoritative, forward-thinking.`;
+
+    const styleGuide = imageStyle || defaultStyle;
+
+    const imagePrompt = `Create a hero image for a blog article titled "${title}" (topic: ${keyword}).
+
+${styleGuide}
+
+CRITICAL RULES:
+- The image must visually relate to the specific topic of "${keyword}" — not be generic
+- ABSOLUTELY NO TEXT. No words, letters, numbers, logos, watermarks, or signatures
+- No stock photo clichés (no handshakes, no people pointing at screens, no thumbs up)`;
 
     const response = await openai.images.generate({
       model: "dall-e-3",
       prompt: imagePrompt,
       n: 1,
       size: "1792x1024",
-      quality: "standard",
+      quality: "hd",
     });
 
     const imageUrl = response.data?.[0]?.url;
@@ -380,7 +396,8 @@ Return a JSON object with EXACTLY these fields:
     const heroImageUrl = await generateHeroImage(
       articleData.title,
       entry.target_keyword || articleData.semantic_tags?.[0] || "business technology",
-      articleData.slug
+      articleData.slug,
+      brand.imageStyle
     );
 
     // 8. Save via Frontend API

@@ -39,6 +39,14 @@ key: author
 content: [Your Name]
 ```
 
+**Image Style** — controls the AI-generated hero images for articles (uses DALL-E):
+```
+category: content
+key: image_style
+content: (your image style description — composition, color palette, lighting, mood, what to avoid)
+```
+If no image style is configured, the system uses a clean editorial photography default. You can describe any aesthetic — minimalist, bold, illustrated, photographic — and every generated hero image will follow it.
+
 You can add these via the Supabase dashboard (Table Editor → brand_context → Insert row) or via the `/api/setup` endpoint.
 
 ### Step 4: Install and Run
