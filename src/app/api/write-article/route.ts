@@ -158,15 +158,19 @@ CRITICAL RULES:
 // ─── Main handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const { calendar_entry_id } = body;
+  // Authenticate: require API key for external calls
+  const apiKey = request.headers.get("x-api-key");
+  const expectedKey = process.env.API_SECRET_KEY;
 
-  if (!calendar_entry_id) {
-    return NextResponse.json(
-      { error: "calendar_entry_id is required" },
-      { status: 400 }
-    );
+  // Allow if: valid API key OR request comes from the dashboard (has session cookie)
+  const hasSessionCookie = request.cookies.getAll().some(c => c.name.startsWith("sb-"));
+  if (!hasSessionCookie && (!expectedKey || apiKey !== expectedKey)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const body = await request.json();
+  let { calendar_entry_id } = body;
+  const publish_mode = body.publish_mode;
 
   // Check for Anthropic API key
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -180,6 +184,27 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = createAdminClient();
+
+  // If no calendar_entry_id, auto-select the next approved entry
+  if (!calendar_entry_id) {
+    const { data: nextEntry, error: selectError } = await supabase
+      .from("content_calendar")
+      .select("id")
+      .eq("status", "approved")
+      .order("priority", { ascending: true })
+      .order("publish_date", { ascending: true })
+      .limit(1)
+      .single();
+
+    if (selectError || !nextEntry) {
+      return NextResponse.json(
+        { error: "No approved entries in the content calendar. Approve a topic first." },
+        { status: 404 }
+      );
+    }
+
+    calendar_entry_id = nextEntry.id;
+  }
 
   // 1. Fetch the calendar entry
   const { data: entry, error: entryError } = await supabase
@@ -202,7 +227,7 @@ export async function POST(request: NextRequest) {
     .eq("key", "publish_mode")
     .single();
 
-  const publishMode = settingsData?.value === "autonomous" ? "autonomous" : "safe";
+  const publishMode = publish_mode === "autonomous" || settingsData?.value === "autonomous" ? "autonomous" : "safe";
   const targetStatus = publishMode === "autonomous" ? "published" : "draft";
 
   // 3. Mark as writing
