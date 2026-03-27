@@ -1,5 +1,75 @@
 # Digital Home Backend
 
+## First Time Setup
+
+If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) repo. **Set up the Frontend first** — it has the database migrations.
+
+### Step 1: Supabase + Migrations (Frontend First)
+If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all migrations, and create an admin user. Both repos share the same database.
+
+### Step 2: Set Up Environment Variables
+```bash
+cp .env.local.example .env.local
+```
+Fill in:
+- `NEXT_PUBLIC_SUPABASE_URL` — your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — your Supabase anon key
+- `SUPABASE_SERVICE_ROLE_KEY` — your Supabase service role key
+- `DIGITAL_HOME_URL` — your Frontend's live URL (e.g., `https://yourdomain.com`)
+- `API_SECRET_KEY` — a shared secret you choose (must match the Frontend)
+- `ANTHROPIC_API_KEY` — from [console.anthropic.com](https://console.anthropic.com) (for AI article writing)
+- `OPENAI_API_KEY` — from [platform.openai.com](https://platform.openai.com) (for DALL-E hero images, optional)
+
+### Step 3: Seed Your Brand Context
+Your brand context is what makes the AI write in your voice. First, fill in your content corpus files (see the Frontend's `content-corpus-examples/` for the format). Then seed them into Supabase by sending a POST request to `/api/setup` with your brand data.
+
+You also need two special entries in the `brand_context` table:
+
+**CTA Links** — the links the AI will use in article CTAs:
+```
+category: cta
+key: links
+content: (your CTA links in HTML — one per line, with descriptions of when to use each)
+```
+
+**Author Name** — the byline on articles:
+```
+category: identity
+key: author
+content: [Your Name]
+```
+
+You can add these via the Supabase dashboard (Table Editor → brand_context → Insert row) or via the `/api/setup` endpoint.
+
+### Step 4: Install and Run
+```bash
+npm install
+npm run dev
+```
+Open `http://localhost:3001` and log in with the admin user you created in Supabase.
+
+### Step 5: Deploy to Cloudflare
+```bash
+npm run build
+npx wrangler deploy
+```
+Then set server-side secrets:
+```bash
+wrangler secret put SUPABASE_SERVICE_ROLE_KEY
+wrangler secret put API_SECRET_KEY
+wrangler secret put ANTHROPIC_API_KEY
+wrangler secret put OPENAI_API_KEY
+wrangler secret put DIGITAL_HOME_URL
+wrangler secret put SUPABASE_URL
+wrangler secret put SUPABASE_ANON_KEY
+```
+When prompted, paste ONLY the value (not the variable name).
+
+### Step 6: Verify Everything Works
+Visit `https://your-backend-url.com/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
+
+---
+
 ## What This Is
 The Digital Home Backend is the operating system behind a Digital Home. It's a standalone application that manages content, leads, email, analytics, and AI agents — replacing rented SaaS admin panels with a single, owned, agent-native system.
 
