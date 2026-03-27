@@ -647,6 +647,7 @@ function DraggableCard({
                 href={`${DIGITAL_HOME_URL}/blog/${entry.content_objects.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
+                referrerPolicy="no-referrer"
                 className="text-[10px] uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
               >
                 View →
