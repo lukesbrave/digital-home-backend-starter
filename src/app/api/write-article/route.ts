@@ -22,19 +22,35 @@ const API_KEY = process.env.API_SECRET_KEY || "";
 
 // ─── Brand context loader ────────────────────────────────────────────────────
 
-// Priority: database first, filesystem fallback (local dev)
-async function loadBrandContext(): Promise<string> {
+interface BrandContext {
+  fullContext: string;
+  ctaLinks: string;
+  authorName: string;
+}
+
+async function loadBrandContext(): Promise<BrandContext> {
   const supabase = createAdminClient();
 
-  // Try database first (production-ready)
   const { data: dbContext } = await supabase
     .from("brand_context")
     .select("key, category, content")
     .order("category");
 
-  return (dbContext || [])
+  const rows = dbContext || [];
+
+  const fullContext = rows
     .map((row) => `# ${row.category}/${row.key}\n\n${row.content}`)
     .join("\n\n---\n\n");
+
+  // Extract CTA links from brand context (category: "cta", key: "links")
+  const ctaRow = rows.find((r) => r.category === "cta" && r.key === "links");
+  const ctaLinks = ctaRow?.content || "";
+
+  // Extract author name from brand context (category: "identity", key: "author")
+  const authorRow = rows.find((r) => r.category === "identity" && r.key === "author");
+  const authorName = authorRow?.content?.trim() || "Content Agent";
+
+  return { fullContext, ctaLinks, authorName };
 }
 
 // ─── Fetch existing articles for internal linking ────────────────────────────
@@ -181,7 +197,7 @@ export async function POST(request: NextRequest) {
 
   try {
     // 4. Load brand context and existing articles
-    const [brandContext, publishedArticles] = await Promise.all([
+    const [brand, publishedArticles] = await Promise.all([
       loadBrandContext(),
       fetchPublishedSlugs(),
     ]);
@@ -192,24 +208,25 @@ export async function POST(request: NextRequest) {
           .join("\n")}`
       : "";
 
+    // Build CTA instruction from brand context
+    const ctaInstruction = brand.ctaLinks
+      ? `- The CTA section MUST include one of the links below (choose the most relevant for the article topic). Use ONLY these exact links — do not modify the URLs or create new ones:\n${brand.ctaLinks}`
+      : "- End with a CTA section that ties to the brand's offers. Match the article topic to the most relevant offer from the brand context.";
+
     // 5. Call Claude to write the article
     const anthropic = new Anthropic();
 
-    const systemPrompt = `You are the BraveBrand Content Agent. You write articles optimized for human readers and AI systems.
+    const systemPrompt = `You are a Content Agent. You write articles optimized for human readers and AI systems.
 
-${brandContext}
+${brand.fullContext}
 ${internalLinks}
 
 IMPORTANT RULES:
-- Write in the BraveBrand voice: Clay Christensen's structured storytelling meets Antonio García Martínez's provocative irreverence
+- Write in the brand voice defined above. Follow the voice guide, tone examples, and banned phrases strictly.
 - Reading level: 9th grade. Short sentences. Plain words.
-- Follow the banned phrases list strictly
 - Article length: 1,200-2,500 words
 - Do NOT include the article title as an H1 or H2 at the start of the body — the website renders the title separately above the article. Start the body directly with the hook paragraph.
-- The CTA section MUST include one of these three links (choose the most relevant for the article topic). Use ONLY these exact links — do not modify the URLs or create new ones:
-  1. <a href="https://yourdomain.com/contact">Book a free strategy call</a> — use when the article is about business strategy, digital infrastructure, or getting started
-  2. <a href="https://yourdomain.com/services">See how we build Digital Homes</a> — use when the article is about websites, tech stacks, or Digital Home features
-  3. <a href="https://www.skool.com/bravebrand/about">Join the BraveBrand community</a> — use when the article is about community, learning, or staying connected
+${ctaInstruction}
 - Output ONLY valid JSON — no markdown code fences, no commentary
 - CRITICAL: In the "body" field, escape all double quotes inside HTML attributes using \\" so the JSON stays valid. For example: <a href=\\"https://example.com\\">text</a>
 - Do NOT include any text before or after the JSON object`;
@@ -229,7 +246,7 @@ Follow this structure:
 4. The reframe — shift their perspective on the real problem
 5. The framework/solution — present the systematic approach
 6. Proof — reference relevant case studies or testimonials from the brand context
-7. CTA — tie to one of BraveBrand's offers (matched by topic relevance)
+7. CTA — tie to one of the brand's offers (matched by topic relevance)
 
 SEO requirements:
 - Integrate target keyword 3-5 times naturally
@@ -378,7 +395,7 @@ Return a JSON object with EXACTLY these fields:
       featured_image_url: heroImageUrl,
       status: targetStatus,
       created_by: "content_agent",
-      author_name: "Luke Carter",
+      author_name: brand.authorName,
       seo: {
         ...articleData.seo,
         og_image_url: heroImageUrl,
