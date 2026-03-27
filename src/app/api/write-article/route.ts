@@ -263,9 +263,12 @@ ${internalLinks}
 
 IMPORTANT RULES:
 - Write in the brand voice defined above. Follow the voice guide, tone examples, and banned phrases strictly.
-- Reading level: 9th grade. Short sentences. Plain words.
-- Article length: 1,200-2,500 words
+- Match the tone and style in the tone examples — study them carefully. They define how the brand actually sounds.
+- Reading level: 9th grade. Short sentences. Plain words. No jargon.
+- Article length: MINIMUM 1,500 words, target 2,000-2,500 words. This is non-negotiable. Short articles get rejected.
+- Every paragraph should be a dense, contextually complete semantic unit. Prefer paragraph-based exposition over bullet points.
 - Do NOT include the article title as an H1 or H2 at the start of the body — the website renders the title separately above the article. Start the body directly with the hook paragraph.
+- Use HTML formatting: <h2>, <h3>, <p>, <blockquote>, <ul>, <li>, <strong>, <em>, <a> tags
 ${ctaInstruction}
 - Output ONLY valid JSON — no markdown code fences, no commentary
 - CRITICAL: In the "body" field, escape all double quotes inside HTML attributes using \\" so the JSON stays valid. For example: <a href=\\"https://example.com\\">text</a>
@@ -323,8 +326,8 @@ Return a JSON object with EXACTLY these fields:
 }`;
 
     const message = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 8000,
+      model: "claude-sonnet-4-6",
+      max_tokens: 16000,
       messages: [{ role: "user", content: userPrompt }],
       system: systemPrompt,
     });
