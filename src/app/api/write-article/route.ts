@@ -357,10 +357,15 @@ Return a JSON object with EXACTLY these fields:
     };
 
     try {
+      // Sanitize control characters that break JSON.parse
+      // Replace ALL control chars (including newlines/tabs) with a space —
+      // literal newlines inside JSON string values are invalid and cause parse errors
+      const sanitized = responseText.replace(/[\x00-\x1F\x7F]/g, " ");
+
       // Strategy 1: Try parsing the full response as JSON directly
       let parsed = false;
       try {
-        articleData = JSON.parse(responseText.trim());
+        articleData = JSON.parse(sanitized.trim());
         parsed = true;
       } catch {
         // Not pure JSON, try extraction
@@ -368,7 +373,7 @@ Return a JSON object with EXACTLY these fields:
 
       // Strategy 2: Extract JSON from markdown code fences
       if (!parsed) {
-        const fenceMatch = responseText.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
+        const fenceMatch = sanitized.match(/```(?:json)?\s*(\{[\s\S]*?\})\s*```/);
         if (fenceMatch) {
           try {
             articleData = JSON.parse(fenceMatch[1]);
@@ -381,7 +386,7 @@ Return a JSON object with EXACTLY these fields:
 
       // Strategy 3: Find the outermost JSON object by bracket matching
       if (!parsed) {
-        const startIdx = responseText.indexOf("{");
+        const startIdx = sanitized.indexOf("{");
         if (startIdx === -1) throw new Error("No JSON found in response");
 
         let depth = 0;
@@ -389,8 +394,8 @@ Return a JSON object with EXACTLY these fields:
         let inString = false;
         let escapeNext = false;
 
-        for (let i = startIdx; i < responseText.length; i++) {
-          const char = responseText[i];
+        for (let i = startIdx; i < sanitized.length; i++) {
+          const char = sanitized[i];
           if (escapeNext) { escapeNext = false; continue; }
           if (char === "\\") { escapeNext = true; continue; }
           if (char === '"') { inString = !inString; continue; }
@@ -400,7 +405,7 @@ Return a JSON object with EXACTLY these fields:
         }
 
         if (endIdx === -1) throw new Error("No complete JSON object found in response");
-        articleData = JSON.parse(responseText.slice(startIdx, endIdx + 1));
+        articleData = JSON.parse(sanitized.slice(startIdx, endIdx + 1));
         parsed = true;
       }
 
