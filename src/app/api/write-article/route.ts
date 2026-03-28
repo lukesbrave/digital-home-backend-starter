@@ -155,6 +155,74 @@ CRITICAL RULES:
   }
 }
 
+// ─── JSON repair ─────────────────────────────────────────────────────────────
+
+/**
+ * Repair broken JSON caused by unescaped double quotes inside string values.
+ *
+ * Claude sometimes outputs HTML like <a href="url"> inside a JSON string
+ * without escaping the quotes. This function detects those unescaped quotes
+ * and adds backslash escapes so JSON.parse can handle it.
+ *
+ * Heuristic: In valid JSON, a closing " is always followed by : , } ] or
+ * whitespace before one of those. If a " inside a string is followed by
+ * something else (like a letter), it's an unescaped interior quote.
+ *
+ * This function is a no-op on already-valid JSON.
+ */
+function repairJsonQuotes(text: string): string {
+  const result: string[] = [];
+  let inString = false;
+  let escapeNext = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (escapeNext) {
+      result.push(char);
+      escapeNext = false;
+      continue;
+    }
+
+    if (char === "\\") {
+      result.push(char);
+      escapeNext = true;
+      continue;
+    }
+
+    if (char === '"') {
+      if (!inString) {
+        inString = true;
+        result.push(char);
+      } else {
+        // Is this closing the string, or an unescaped quote inside it?
+        // Look ahead past any whitespace for a JSON structural character
+        let j = i + 1;
+        while (j < text.length && text[j] === " ") j++;
+        const next = text[j];
+
+        if (
+          next === ":" || next === "," || next === "}" ||
+          next === "]" || next === undefined
+        ) {
+          // Looks like a real string boundary
+          inString = false;
+          result.push(char);
+        } else {
+          // Unescaped quote inside a string value — escape it
+          result.push("\\");
+          result.push(char);
+        }
+      }
+      continue;
+    }
+
+    result.push(char);
+  }
+
+  return result.join("");
+}
+
 // ─── Main handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
@@ -357,10 +425,15 @@ Return a JSON object with EXACTLY these fields:
     };
 
     try {
-      // Sanitize control characters that break JSON.parse
+      // Step 1: Sanitize control characters that break JSON.parse
       // Replace ALL control chars (including newlines/tabs) with a space —
       // literal newlines inside JSON string values are invalid and cause parse errors
-      const sanitized = responseText.replace(/[\x00-\x1F\x7F]/g, " ");
+      const sanitizedCtrl = responseText.replace(/[\x00-\x1F\x7F]/g, " ");
+
+      // Step 2: Repair unescaped double quotes inside string values
+      // Claude sometimes outputs <a href="url"> inside JSON strings without
+      // escaping the quotes — this fixes them before any parse attempt
+      const sanitized = repairJsonQuotes(sanitizedCtrl);
 
       // Strategy 1: Try parsing the full response as JSON directly
       let parsed = false;
