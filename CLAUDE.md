@@ -66,8 +66,11 @@ npm run dev
 Open `http://localhost:3001` and log in with the admin user you created in Supabase.
 
 ### Step 5: Deploy to Cloudflare
+
+> **⚠️ `wrangler.jsonc` and git:** The repo ships with placeholder values in `wrangler.jsonc` (for open-source cloners). Your real Supabase URL, anon key, and domain are set **locally only** and must NOT be committed back to git. If `wrangler.jsonc` shows up in `git status` as modified, that's expected — leave it uncommitted. If you accidentally commit it, revert with `git checkout HEAD -- wrangler.jsonc` after deploying.
+
 ```bash
-npm run build
+npx opennextjs-cloudflare build
 npx wrangler deploy
 ```
 Then set server-side secrets:
