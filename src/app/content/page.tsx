@@ -327,6 +327,20 @@ function BoardView() {
     } finally { setPublishing(null); }
   };
 
+  const resetStuck = async (id?: string) => {
+    try {
+      await fetch('/api/reset-writing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(id ? { calendar_entry_id: id } : {}),
+      });
+      fetchEntries();
+    } catch {
+      // Silent fail — fetchEntries will still refresh
+      fetchEntries();
+    }
+  };
+
   const writeNow = async (id: string) => {
     setWriting(id);
     // Optimistic: move to writing immediately
@@ -441,6 +455,7 @@ function BoardView() {
                   onApprove={() => updateStatus(entry.id, 'approved')}
                   onWriteNow={() => writeNow(entry.id)}
                   onPublish={() => publishEntry(entry.id)}
+                  onReset={() => resetStuck(entry.id)}
                 />
               ))
             )}
@@ -512,6 +527,7 @@ function DraggableCard({
   onApprove,
   onWriteNow,
   onPublish,
+  onReset,
 }: {
   entry: CalendarEntry;
   isDragging: boolean;
@@ -520,6 +536,7 @@ function DraggableCard({
   onApprove: () => void;
   onWriteNow: () => void;
   onPublish: () => void;
+  onReset: () => void;
 }) {
   const canDrag = (VALID_MOVES[entry.status] || []).length > 0 && entry.status !== 'writing';
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -582,13 +599,25 @@ function DraggableCard({
         )}
       </div>
 
-      {/* Always-visible writing indicator */}
+      {/* Always-visible writing indicator + reset escape hatch */}
       {isWriting && (
-        <div className="flex items-center gap-2 mt-3">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-[10px] uppercase tracking-widest text-emerald-500">
-            {isBeingWritten ? 'Writing with AI...' : 'Agent writing...'}
-          </span>
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] uppercase tracking-widest text-emerald-500">
+              {isBeingWritten ? 'Writing with AI...' : 'Agent writing...'}
+            </span>
+          </div>
+          {/* Only show Reset when not actively being written (i.e. it's stuck) */}
+          {!isBeingWritten && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onReset(); }}
+              className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-red-400 transition-colors"
+              title="Reset stuck article back to Approved"
+            >
+              Reset
+            </button>
+          )}
         </div>
       )}
 
