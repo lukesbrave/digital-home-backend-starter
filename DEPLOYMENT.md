@@ -19,33 +19,10 @@ This project uses **@opennextjs/cloudflare** (OpenNext) to run Next.js on Cloudf
 
 ## Step 1: Supabase Setup
 
-Run these SQL commands in the Supabase SQL Editor to create the required tables:
+Run the Frontend migrations first, then run this repo's migration in the Supabase SQL Editor:
 
 ```sql
--- Create brand context table
-CREATE TABLE IF NOT EXISTS brand_context (
-  key TEXT PRIMARY KEY,
-  category TEXT NOT NULL,
-  content TEXT NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Create backend settings table
-CREATE TABLE IF NOT EXISTS backend_settings (
-  key TEXT PRIMARY KEY,
-  value JSONB NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable Row Level Security
-ALTER TABLE brand_context ENABLE ROW LEVEL SECURITY;
-ALTER TABLE backend_settings ENABLE ROW LEVEL SECURITY;
-
--- Service role access only
-CREATE POLICY "Service role full access" ON brand_context
-  FOR ALL USING (auth.role() = 'service_role');
-CREATE POLICY "Service role full access" ON backend_settings
-  FOR ALL USING (auth.role() = 'service_role');
+-- digital-home-backend/supabase/migrations/001_backend_core.sql
 ```
 
 ## Step 2: Create Admin User
@@ -108,11 +85,9 @@ Secrets set via Wrangler take effect immediately — no rebuild needed.
 
 ## Step 5: Seed Brand Context
 
-After deploying, call the setup endpoint once to load brand context into the database:
+After deploying, log into the backend and call the authenticated setup endpoint from that session, or insert the rows directly in Supabase:
 
-```bash
-curl -X POST https://your-backend-url/api/setup
-```
+`POST https://your-backend-url/api/setup`
 
 ## Step 6: Custom Domain (Optional)
 
@@ -197,4 +172,3 @@ echo ".wrangler/" >> .gitignore
 git add .gitignore
 git commit -m "Remove build artifacts and update gitignore"
 ```
-

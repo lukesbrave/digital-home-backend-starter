@@ -31,7 +31,10 @@
   // Non-secret env vars. Secrets (API keys) are set via Cloudflare dashboard.
   "vars": {
     "SUPABASE_URL": "https://your-project.supabase.co",
+    "SUPABASE_ANON_KEY": "your-anon-key",
     "NEXT_PUBLIC_SUPABASE_URL": "https://your-project.supabase.co",
-    "DIGITAL_HOME_URL": "https://yourdomain.com"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "your-anon-key",
+    "DIGITAL_HOME_URL": "https://yourdomain.com",
+    "NEXT_PUBLIC_DIGITAL_HOME_URL": "https://yourdomain.com"
   }
 }

@@ -10,9 +10,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
+  const auth = await authenticateSession(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
+
   const supabase = createAdminClient();
 
   let body: { calendar_entry_id?: string } = {};

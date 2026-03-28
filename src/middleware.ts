@@ -30,11 +30,6 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // DEV BYPASS — remove before production
-  if (process.env.NODE_ENV === 'development') {
-    return response;
-  }
-
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {

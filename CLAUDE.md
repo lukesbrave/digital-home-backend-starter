@@ -5,7 +5,11 @@
 If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) repo. **Set up the Frontend first** — it has the database migrations.
 
 ### Step 1: Supabase + Migrations (Frontend First)
-If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all migrations, and create an admin user. Both repos share the same database.
+If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all Frontend migrations (`001` through `011`), and create an admin user. Then run this repo's migration:
+
+- `supabase/migrations/001_backend_core.sql`
+
+Both repos share the same database. The Frontend owns the shared website schema; this repo owns `backend_settings` and `brand_context`.
 
 ### Step 2: Set Up Environment Variables
 ```bash
@@ -21,7 +25,10 @@ Fill in:
 - `OPENAI_API_KEY` — from [platform.openai.com](https://platform.openai.com) (for DALL-E hero images, optional)
 
 ### Step 3: Seed Your Brand Context
-Your brand context is what makes the AI write in your voice. First, fill in your content corpus files (see the Frontend's `content-corpus-examples/` for the format). Then seed them into Supabase by sending a POST request to `/api/setup` with your brand data.
+Your brand context is what makes the AI write in your voice. First, fill in your content corpus files (see the Frontend's `content-corpus-examples/` for the format). Then seed them into Supabase either:
+
+- via the Supabase dashboard / SQL editor, or
+- via the authenticated `/api/setup` route after logging into the Backend
 
 > **⚠️ This is the most important step.** The content corpus is what separates AI that writes like you from AI that writes generic slop. A properly built corpus includes: voice guide, tone examples, content hooks, core positioning, offer architecture, competitive landscape, SEO keyword clusters, and case studies/testimonials. If you haven't completed your content corpus in the Frontend setup, do that first. A structured brand intake process and content corpus skill are available in the [BraveBrand community](https://www.skool.com/bravebrand).
 
@@ -49,7 +56,7 @@ content: (your image style description — composition, color palette, lighting,
 ```
 If no image style is configured, the system uses a clean editorial photography default. You can describe any aesthetic — minimalist, bold, illustrated, photographic — and every generated hero image will follow it.
 
-You can add these via the Supabase dashboard (Table Editor → brand_context → Insert row) or via the `/api/setup` endpoint.
+You can add these via the Supabase dashboard (Table Editor → brand_context → Insert row) or via the authenticated `/api/setup` endpoint.
 
 ### Step 4: Install and Run
 ```bash
@@ -76,7 +83,7 @@ wrangler secret put SUPABASE_ANON_KEY
 When prompted, paste ONLY the value (not the variable name).
 
 ### Step 6: Verify Everything Works
-Visit `https://your-backend-url.com/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
+Log into the Backend, then visit `https://your-backend-url.com/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
 
 ---
 
@@ -194,6 +201,7 @@ These are baked into JavaScript at build time. They go in the Cloudflare dashboa
 ```
 NEXT_PUBLIC_SUPABASE_URL      — Supabase project URL (same as Digital Home)
 NEXT_PUBLIC_SUPABASE_ANON_KEY — Supabase anon key (same as Digital Home)
+NEXT_PUBLIC_DIGITAL_HOME_URL  — Public site URL used for "View live" links in the dashboard
 ```
 
 ### Server-side secrets
@@ -215,21 +223,23 @@ DIGITAL_HOME_URL              — The public-facing Digital Home URL (e.g., http
 - The Frontend also needs its own secrets set via `wrangler secret put` — see the Frontend CLAUDE.md
 
 ### Verifying API connectivity
-After setting all secrets, test the Backend→Frontend connection by visiting:
+After setting all secrets, log into the Backend and test the Backend→Frontend connection by visiting:
 ```
 https://your-backend-url.com/api/test-frontend
 ```
 This returns the Frontend URL, API key status, and whether the Frontend responds. Check:
 - `api_key_set` should be `true`
-- `api_key_preview` should show the first/last 4 chars of your key (not `NOT SET` or the variable name)
 - `status` should be `200`
 If `status` is `401`, the API key doesn't match between Backend and Frontend. Re-set it on both.
 
 ## Important Conventions
 - **Auth required on all pages** except `/login`. Middleware handles the redirect.
 - **No public signup.** Admin users are created directly in Supabase dashboard.
-- **Direct Supabase queries** for read operations (faster than going through the Digital Home API).
-- **Digital Home API** for write operations that need to trigger side effects (e.g., publishing content triggers SEO metadata generation).
+- **Protected API routes for admin data.** The dashboard should read and write admin tables through authenticated Next API routes, not browser-side Supabase queries.
+- **Digital Home API** for content writes that need shared-site side effects (e.g., publishing content triggers SEO metadata generation in the Frontend).
+- **Route auth split:**
+  - session-only: admin dashboard APIs (`/api/articles`, `/api/content-calendar`, `/api/publish`, `/api/reset-writing`, `/api/settings`, `/api/setup`, `/api/test-frontend`)
+  - session or API key: machine-triggered article writing (`/api/write-article`, `/api/write-now`)
 - **Dark theme only.** This is a professional dashboard, not a consumer app.
 - **CRITICAL — Shared database types:** When you modify `src/types/database.ts` or add/change a Supabase migration, you MUST also update the same `src/types/database.ts` file in the Digital Home Frontend project (located at `../Digital Home 2.0/src/types/database.ts`). These two files must always be identical. After making changes, copy the updated file to the other project immediately.
 

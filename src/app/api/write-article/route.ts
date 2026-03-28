@@ -11,6 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateSessionOrApiKey, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
@@ -70,7 +71,8 @@ async function fetchPublishedSlugs(): Promise<
     );
     if (!res.ok) return [];
     const data = await res.json();
-    return (data.articles || data.content || []).map(
+    const items = data.data || data.articles || data.content || [];
+    return items.map(
       (a: { slug: string; title: string }) => ({
         slug: a.slug,
         title: a.title,
@@ -226,15 +228,8 @@ function repairJsonQuotes(text: string): string {
 // ─── Main handler ────────────────────────────────────────────────────────────
 
 export async function POST(request: NextRequest) {
-  // Authenticate: require API key for external calls
-  const apiKey = request.headers.get("x-api-key");
-  const expectedKey = process.env.API_SECRET_KEY;
-
-  // Allow if: valid API key OR request comes from the dashboard (has session cookie)
-  const hasSessionCookie = request.cookies.getAll().some(c => c.name.startsWith("sb-"));
-  if (!hasSessionCookie && (!expectedKey || apiKey !== expectedKey)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await authenticateSessionOrApiKey(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
 
   const body = await request.json();
   let { calendar_entry_id } = body;

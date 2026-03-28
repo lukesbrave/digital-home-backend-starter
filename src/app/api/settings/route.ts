@@ -16,6 +16,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 
 
@@ -23,7 +24,10 @@ const DEFAULTS: Record<string, unknown> = {
   publish_mode: "safe",
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = await authenticateSession(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
+
   const supabase = createAdminClient();
 
   const { data, error } = await supabase
@@ -44,6 +48,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await authenticateSession(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
+
   const body = await request.json();
   const { key, value } = body;
 

@@ -3,13 +3,17 @@
  * Tests that the API key is accepted and Supabase connection works
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
 const API_KEY = process.env.API_SECRET_KEY || "";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = await authenticateSession(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
+
   try {
     const res = await fetch(`${FRONTEND_URL}/api/content?status=published&limit=1`, {
       headers: {
@@ -25,7 +29,6 @@ export async function GET() {
       status: res.status,
       statusText: res.statusText,
       api_key_set: !!API_KEY,
-      api_key_preview: API_KEY ? `${API_KEY.slice(0, 4)}...${API_KEY.slice(-4)}` : "NOT SET",
       response_preview: body.slice(0, 500),
     });
   } catch (error) {

@@ -69,12 +69,15 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 3. **Create an admin user**
    Go to your Supabase dashboard → Authentication → Users → Add user. There is no public signup — admin users are created directly in Supabase.
 
-4. **Run locally**
+4. **Run backend migration**
+   Run `supabase/migrations/001_backend_core.sql` in the same Supabase project used by the Frontend.
+
+5. **Run locally**
    ```bash
    npm run dev
    ```
 
-5. **Deploy to Cloudflare**
+6. **Deploy to Cloudflare**
    ```bash
    npm run build
    npx wrangler deploy
@@ -87,6 +90,11 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
    wrangler secret put OPENAI_API_KEY
    wrangler secret put DIGITAL_HOME_URL
    ```
+
+### Security Model
+- Public visitors should only see published content and active offers from the shared database.
+- Backend admin APIs are session-protected.
+- Machine-triggered writing endpoints (`/api/write-article`, `/api/write-now`) accept either a valid admin session or `x-api-key`.
 
 ### Full Documentation
 The `CLAUDE.md` file is the complete technical reference — architecture, modules, environment variables, Cloudflare rules, and conventions. Open Claude Code in this repo and it knows everything.

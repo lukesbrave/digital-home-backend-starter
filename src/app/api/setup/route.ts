@@ -6,10 +6,14 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 
 
 export async function POST(request: NextRequest) {
+  const auth = await authenticateSession(request);
+  if (!auth.authenticated) return unauthorizedResponse(auth.error);
+
   const supabase = createAdminClient();
 
   // 1. Test if tables exist
@@ -21,27 +25,9 @@ export async function POST(request: NextRequest) {
   if (testError?.message?.includes("not found") || testError?.message?.includes("does not exist")) {
     return NextResponse.json(
       {
-        error: "Tables not created yet. Run these SQL commands in Supabase Dashboard → SQL Editor:",
-        sql: `
-CREATE TABLE IF NOT EXISTS brand_context (
-  key TEXT PRIMARY KEY,
-  category TEXT NOT NULL,
-  content TEXT NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS backend_settings (
-  key TEXT PRIMARY KEY,
-  value JSONB NOT NULL,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-ALTER TABLE brand_context ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Service role full access" ON brand_context FOR ALL USING (true);
-
-ALTER TABLE backend_settings ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Service role full access" ON backend_settings FOR ALL USING (true);
-        `.trim(),
+        error:
+          "Tables not created yet. Run the checked-in backend Supabase migrations before using setup.",
+        migration_path: "supabase/migrations/001_backend_core.sql",
       },
       { status: 400 }
     );

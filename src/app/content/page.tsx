@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { createClient } from '@/lib/supabase/browser';
 import Link from 'next/link';
 import { WritingGlow } from '@/components/ui/writing-glow';
 import {
@@ -70,7 +69,7 @@ const PRIORITY_DOTS: Record<string, string> = {
   low: 'bg-minimal-muted',
 };
 
-const DIGITAL_HOME_URL = process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || 'https://yourdomain.com';
+const DIGITAL_HOME_URL = process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || '';
 
 // Valid drag-and-drop transitions
 const VALID_MOVES: Record<string, string[]> = {
@@ -272,8 +271,6 @@ function BoardView() {
   const [writing, setWriting] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overColumn, setOverColumn] = useState<string | null>(null);
-  const supabase = createClient();
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
@@ -281,14 +278,22 @@ function BoardView() {
   // Silent refresh — no loading spinner after initial load
   const fetchEntries = useCallback(async (showLoader = false) => {
     if (showLoader) setLoading(true);
-    const { data } = await supabase
-      .from('content_calendar')
-      .select('*, content_objects:content_object_id(slug, status, published_at)')
-      .order('created_at', { ascending: false })
-      .limit(200);
-    setEntries((data || []) as unknown as CalendarEntry[]);
+    try {
+      const res = await fetch('/api/content-calendar?limit=200', {
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        throw new Error('Failed to load calendar');
+      }
+
+      const data = await res.json();
+      setEntries((data.entries || []) as CalendarEntry[]);
+    } catch (error) {
+      console.error(error);
+      setEntries([]);
+    }
     if (showLoader) setLoading(false);
-  }, [supabase]);
+  }, []);
 
   // Only show loading spinner on first load
   useEffect(() => { fetchEntries(true); }, [fetchEntries]);
@@ -300,7 +305,16 @@ function BoardView() {
       prev.map((e) => (e.id === id ? { ...e, status } : e))
     );
     // Then sync with database
-    await supabase.from('content_calendar').update({ status }).eq('id', id);
+    const res = await fetch(`/api/content-calendar/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      fetchEntries();
+      return;
+    }
     // Silent refresh to pick up any server-side changes
     fetchEntries();
   };
@@ -315,6 +329,7 @@ function BoardView() {
       const res = await fetch('/api/publish', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ calendar_entry_id: id }),
       });
       const data = await res.json();
@@ -332,6 +347,7 @@ function BoardView() {
       await fetch('/api/reset-writing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify(id ? { calendar_entry_id: id } : {}),
       });
       fetchEntries();
@@ -351,6 +367,7 @@ function BoardView() {
       const res = await fetch('/api/write-now', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ calendar_entry_id: id }),
       });
       const data = await res.json();
