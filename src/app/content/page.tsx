@@ -527,7 +527,7 @@ function DroppableColumn({
         </span>
         <span className="text-[10px] text-minimal-muted">{count}</span>
       </div>
-      <div className="flex flex-col gap-3 overflow-y-auto flex-1">
+      <div className="flex flex-col gap-3 overflow-y-auto flex-1 px-3 -mx-3">
         {children}
       </div>
     </div>
