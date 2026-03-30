@@ -44,7 +44,10 @@ export async function GET(request: NextRequest) {
     settings[row.key] = row.value;
   }
 
-  return NextResponse.json({ settings });
+  return NextResponse.json({
+    settings,
+    digital_home_url: process.env.DIGITAL_HOME_URL || process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || '',
+  });
 }
 
 export async function POST(request: NextRequest) {

@@ -69,7 +69,6 @@ const PRIORITY_DOTS: Record<string, string> = {
   low: 'bg-minimal-muted',
 };
 
-const DIGITAL_HOME_URL = process.env.NEXT_PUBLIC_DIGITAL_HOME_URL || '';
 
 // Valid drag-and-drop transitions
 const VALID_MOVES: Record<string, string[]> = {
@@ -87,8 +86,9 @@ export default function ContentPipelinePage() {
   const [view, setView] = useState<'board' | 'list'>('board');
   const [showModal, setShowModal] = useState(false);
   const [publishMode, setPublishMode] = useState<'safe' | 'autonomous'>('safe');
+  const [digitalHomeUrl, setDigitalHomeUrl] = useState('');
 
-  // Load publish mode from database on mount
+  // Load settings from database on mount
   useEffect(() => {
     fetch('/api/settings')
       .then(res => res.json())
@@ -96,6 +96,9 @@ export default function ContentPipelinePage() {
         const mode = data.settings?.publish_mode;
         if (mode === 'safe' || mode === 'autonomous') {
           setPublishMode(mode);
+        }
+        if (data.digital_home_url) {
+          setDigitalHomeUrl(data.digital_home_url);
         }
       })
       .catch(() => {});
@@ -192,7 +195,7 @@ export default function ContentPipelinePage() {
         </button>
       </div>
 
-      {view === 'board' ? <BoardView /> : <ListView />}
+      {view === 'board' ? <BoardView digitalHomeUrl={digitalHomeUrl} /> : <ListView />}
 
       {/* Footer */}
       <footer className="h-16 px-12 flex items-center justify-between text-[10px] text-minimal-muted uppercase tracking-[0.2em] shrink-0">
@@ -264,7 +267,7 @@ export default function ContentPipelinePage() {
 
 // ─── Board View (Kanban) ─────────────────────────────────────────────────────
 
-function BoardView() {
+function BoardView({ digitalHomeUrl }: { digitalHomeUrl: string }) {
   const [entries, setEntries] = useState<CalendarEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [publishing, setPublishing] = useState<string | null>(null);
@@ -428,7 +431,15 @@ function BoardView() {
   };
 
   const grouped = BOARD_COLUMNS.reduce((acc, status) => {
-    acc[status] = entries.filter((e) => e.status === status);
+    const items = entries.filter((e) => e.status === status);
+    if (status === 'published') {
+      items.sort((a, b) => {
+        const aTime = a.content_objects?.published_at || a.created_at;
+        const bTime = b.content_objects?.published_at || b.created_at;
+        return new Date(bTime).getTime() - new Date(aTime).getTime();
+      });
+    }
+    acc[status] = items;
     return acc;
   }, {} as Record<string, CalendarEntry[]>);
 
@@ -473,6 +484,7 @@ function BoardView() {
                   onWriteNow={() => writeNow(entry.id)}
                   onPublish={() => publishEntry(entry.id)}
                   onReset={() => resetStuck(entry.id)}
+                  digitalHomeUrl={digitalHomeUrl}
                 />
               ))
             )}
@@ -545,6 +557,7 @@ function DraggableCard({
   onWriteNow,
   onPublish,
   onReset,
+  digitalHomeUrl,
 }: {
   entry: CalendarEntry;
   isDragging: boolean;
@@ -554,6 +567,7 @@ function DraggableCard({
   onWriteNow: () => void;
   onPublish: () => void;
   onReset: () => void;
+  digitalHomeUrl: string;
 }) {
   const canDrag = (VALID_MOVES[entry.status] || []).length > 0 && entry.status !== 'writing';
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -690,7 +704,7 @@ function DraggableCard({
                 Edit
               </Link>
               <a
-                href={`${DIGITAL_HOME_URL}/blog/${entry.content_objects.slug}`}
+                href={`${digitalHomeUrl}/blog/${entry.content_objects.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerPolicy="no-referrer"
