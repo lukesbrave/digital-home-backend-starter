@@ -372,7 +372,8 @@ function BoardView() {
       });
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || 'Write failed');
+        const debugInfo = data.debug ? `\n\nDebug: status ${data.debug.status} from ${data.debug.frontend_url}\nResponse: ${JSON.stringify(data.debug.response)}` : '';
+        alert((data.error || 'Write failed') + debugInfo);
         fetchEntries(); // Revert on failure
         setWriting(null);
         return;
