@@ -2,7 +2,7 @@
 
 ## First Time Setup
 
-If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend](https://github.com/lukesbrave/digital-home-starter) repo. **Set up the Frontend first** — it has the database migrations.
+If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend Starter](https://github.com/lukesbrave/digital-home-starter) repo. **Set up the Frontend first** — it has the shared website migrations.
 
 ### Step 1: Supabase + Migrations (Frontend First)
 If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all Frontend migrations (`001` through `011`), and create an admin user. Then run this repo's migration:
@@ -18,9 +18,13 @@ cp .env.local.example .env.local
 Fill in:
 - `NEXT_PUBLIC_SUPABASE_URL` — your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` — your Supabase anon key
+- `SUPABASE_URL` — runtime duplicate of your Supabase URL for Workers
+- `SUPABASE_ANON_KEY` — runtime duplicate of your anon key for Workers
 - `SUPABASE_SERVICE_ROLE_KEY` — your Supabase service role key
 - `DIGITAL_HOME_URL` — your Frontend's live URL (e.g., `https://yourdomain.com`)
 - `API_SECRET_KEY` — a shared secret you choose (must match the Frontend)
+- `API_SIGNATURE_REQUIRED` — keep `true` unless you intentionally need unsigned machine requests during a migration
+- `API_REQUEST_SIGNATURE_TTL_SECONDS` — optional request age limit for signed API calls (default `300`)
 - `ANTHROPIC_API_KEY` — from [console.anthropic.com](https://console.anthropic.com) (for AI article writing)
 - `OPENAI_API_KEY` — from [platform.openai.com](https://platform.openai.com) (for DALL-E hero images, optional)
 
@@ -30,7 +34,7 @@ Your brand context is what makes the AI write in your voice. First, fill in your
 - via the Supabase dashboard / SQL editor, or
 - via the authenticated `/api/setup` route after logging into the Backend
 
-> **⚠️ This is the most important step.** The content corpus is what separates AI that writes like you from AI that writes generic slop. A properly built corpus includes: voice guide, tone examples, content hooks, core positioning, offer architecture, competitive landscape, SEO keyword clusters, and case studies/testimonials. If you haven't completed your content corpus in the Frontend setup, do that first. A structured brand intake process and content corpus skill are available in the [BraveBrand community](https://www.skool.com/bravebrand).
+> **⚠️ This is the most important step.** The content corpus is what separates AI that writes like you from AI that writes generic slop. A properly built corpus includes: voice guide, tone examples, content hooks, core positioning, offer architecture, competitive landscape, SEO keyword clusters, and case studies/testimonials. If you haven't completed your content corpus in the Frontend setup, do that first. If you want help building that part properly, the deeper brand intake and strategy workflow is available in the [BraveBrand community](https://www.skool.com/bravebrand).
 
 You also need two special entries in the `brand_context` table:
 
@@ -65,14 +69,26 @@ npm run dev
 ```
 Open `http://localhost:3001` and log in with the admin user you created in Supabase.
 
-### Step 5: Deploy to Cloudflare
+### Step 5: Create the `images` Storage Bucket
+The article writer uploads hero images to a Supabase Storage bucket named `images`.
+
+In Supabase:
+1. Go to **Storage**
+2. Create a bucket named `images`
+3. Make it **public** if you want article hero images to load directly on the Frontend
+
+If you skip this step, article writing still works, but image uploads will fail gracefully and articles will publish without a hero image.
+
+### Step 6: Deploy to Cloudflare
 
 > **⚠️ `wrangler.jsonc` and git:** The repo ships with placeholder values in `wrangler.jsonc` (for open-source cloners). Your real Supabase URL, anon key, and domain are set **locally only** and must NOT be committed back to git. If `wrangler.jsonc` shows up in `git status` as modified, that's expected — leave it uncommitted. If you accidentally commit it, revert with `git checkout HEAD -- wrangler.jsonc` after deploying.
 
 ```bash
-npx opennextjs-cloudflare build
-npx wrangler deploy
+npm run build
+npm run deploy
 ```
+Before deploying, update `wrangler.jsonc` with your own Worker name, the `WORKER_SELF_REFERENCE.service` value, the R2 cache bucket name, and your runtime URLs.
+
 Then set server-side secrets:
 ```bash
 wrangler secret put SUPABASE_SERVICE_ROLE_KEY
@@ -85,15 +101,30 @@ wrangler secret put SUPABASE_ANON_KEY
 ```
 When prompted, paste ONLY the value (not the variable name).
 
-### Step 6: Verify Everything Works
+### Step 7: Verify Everything Works
 Log into the Backend, then visit `https://your-backend-url.com/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
+
+For GitHub Actions and other automations, the machine-auth flow is:
+- `x-api-key` — shared secret
+- `x-timestamp` — current Unix timestamp in seconds
+- `x-signature` — HMAC-SHA256 of `METHOD:PATH:TIMESTAMP:RAW_BODY`
+
+The Frontend Starter workflows already generate those headers automatically.
+
+### Step 8: Run the Full Publishing Check
+Verify the full cross-repo loop in this order:
+1. Run `weekly-trends.yml` from the Frontend Starter repo
+2. Confirm new ideas appear in `content_calendar`
+3. Approve one topic in the Backend dashboard
+4. Run `daily-publish.yml`
+5. Confirm the article appears in the Frontend blog as a draft or published post, based on your publish mode
 
 ---
 
 ## What This Is
 The Digital Home Backend is the operating system behind a Digital Home. It's a standalone application that manages content, leads, email, analytics, and AI agents — replacing rented SaaS admin panels with a single, owned, agent-native system.
 
-The Backend connects to the same Supabase database as the Digital Home Frontend (the public-facing website). The Frontend is the storefront. The Backend is the back office.
+The Backend connects to the same Supabase database as the Digital Home Frontend Starter (the public-facing website). The Frontend is the storefront. The Backend is the back office.
 
 **Open-source:** Any consultant or business can deploy their own Digital Home Frontend + Backend stack on their own infrastructure. The value is in your content corpus, agent prompts, and implementation expertise — not the platform code.
 
@@ -143,8 +174,8 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 - Priority management (high/medium/low)
 - Publishing mode toggle (safe = drafts for review, autonomous = auto-publish)
 - Bulk approve/archive actions
-- Connects to Claude Code skills: `/content-strategy`, `/write-article`, `/trend-scan`
-- GitHub Actions for daily publishing and weekly trend scanning — **Note:** The workflow files live in the Frontend repo (`.github/workflows/`), not here. They call the Backend's `/api/write-article` route. See the Frontend CLAUDE.md Step 9 for setup instructions.
+- Exposes API routes for article writing and trend scanning
+- GitHub Actions for daily publishing and weekly trend scanning — **Note:** The workflow files live in the Frontend Starter repo (`.github/workflows/`), not here. They call the Backend's `/api/write-article` and `/api/trend-scan` routes. See the Frontend CLAUDE.md for setup instructions.
 
 ### Module 2: Lead Management (planned)
 - Lead pipeline from the Digital Home's email capture forms
@@ -179,7 +210,7 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
 
 ## Project Structure
 ```
-/digital-home-backend/
+  /digital-home-backend-starter/
   CLAUDE.md              ← You are here
   /src
     /app
@@ -191,7 +222,7 @@ The Backend connects to the same Supabase database as the Digital Home Frontend 
     /lib
       /supabase          ← Supabase client (shared credentials with Digital Home)
     /types
-      database.ts        ← Shared database types (keep in sync with Digital Home)
+      database.ts        ← Shared database types (keep in sync with the Frontend Starter)
     middleware.ts        ← Auth guard — redirects to /login if no session
 ```
 
@@ -242,9 +273,9 @@ If `status` is `401`, the API key doesn't match between Backend and Frontend. Re
 - **Digital Home API** for content writes that need shared-site side effects (e.g., publishing content triggers SEO metadata generation in the Frontend).
 - **Route auth split:**
   - session-only: admin dashboard APIs (`/api/articles`, `/api/content-calendar`, `/api/publish`, `/api/reset-writing`, `/api/settings`, `/api/setup`, `/api/test-frontend`)
-  - session or API key: machine-triggered article writing (`/api/write-article`, `/api/write-now`)
+  - session or signed API request: machine-triggered automation routes (`/api/write-article`, `/api/write-now`, `/api/trend-scan`)
 - **Dark theme only.** This is a professional dashboard, not a consumer app.
-- **CRITICAL — Shared database types:** When you modify `src/types/database.ts` or add/change a Supabase migration, you MUST also update the same `src/types/database.ts` file in the Digital Home Frontend project (located at `../Digital Home 2.0/src/types/database.ts`). These two files must always be identical. After making changes, copy the updated file to the other project immediately.
+- **CRITICAL — Shared database types:** When you modify `src/types/database.ts` or add/change a Supabase migration, you MUST also update the same `src/types/database.ts` file in the Digital Home Frontend Starter repo. These two files must always be identical.
 
 ## Cloudflare / OpenNext Rules
 

@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide covers deploying the Digital Home Backend to Cloudflare Pages using OpenNext, with a Vercel alternative for simpler setups.
+This guide covers deploying the Digital Home Backend Starter to Cloudflare Workers using OpenNext, with a Vercel alternative for simpler setups.
 
 ## Important: OpenNext, Not next-on-pages
 
@@ -22,7 +22,7 @@ This project uses **@opennextjs/cloudflare** (OpenNext) to run Next.js on Cloudf
 Run the Frontend migrations first, then run this repo's migration in the Supabase SQL Editor:
 
 ```sql
--- digital-home-backend/supabase/migrations/001_backend_core.sql
+-- digital-home-backend-starter/supabase/migrations/001_backend_core.sql
 ```
 
 ## Step 2: Create Admin User
@@ -36,13 +36,15 @@ There is no public signup. Create your admin user manually:
 
 ## Step 3: Deploy to Cloudflare
 
-1. Go to Cloudflare Dashboard > Workers & Pages > Create
-2. Connect your GitHub repository
-3. Set the build configuration:
+1. Configure `wrangler.jsonc` locally with your non-secret runtime vars
+   - replace the starter Worker name
+   - replace `WORKER_SELF_REFERENCE.service` so it matches that Worker name
+   - replace the R2 cache bucket name with your own unique bucket
+2. Build locally:
    - **Build command:** `npm run build`
-   - **Deploy command:** `npx wrangler deploy` (default)
-4. Click Deploy
-5. After the first successful deploy, Cloudflare will open a PR on your repo with configuration files (`wrangler.jsonc`, `open-next.config.ts`, etc.) — **merge this PR immediately**
+3. Deploy with the package script:
+   - **Deploy command:** `npm run deploy`
+4. Set the required Worker secrets with `wrangler secret put`
 
 ## Step 4: Environment Variables
 
@@ -56,6 +58,7 @@ These go in the Cloudflare dashboard (Settings > Variables & Secrets) AND in `wr
 |----------|-------------|
 | `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `NEXT_PUBLIC_DIGITAL_HOME_URL` | Public frontend URL used by dashboard links |
 
 These are safe to expose — they are restricted by Row Level Security.
 
@@ -66,6 +69,7 @@ These MUST be set using `wrangler secret put` from your terminal. The Cloudflare
 ```bash
 echo "your-value" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY
 echo "your-value" | npx wrangler secret put SUPABASE_ANON_KEY
+echo "your-value" | npx wrangler secret put SUPABASE_URL
 echo "your-value" | npx wrangler secret put API_SECRET_KEY
 echo "your-value" | npx wrangler secret put ANTHROPIC_API_KEY
 echo "your-value" | npx wrangler secret put OPENAI_API_KEY
@@ -83,13 +87,30 @@ echo "your-value" | npx wrangler secret put DIGITAL_HOME_URL
 
 Secrets set via Wrangler take effect immediately — no rebuild needed.
 
-## Step 5: Seed Brand Context
+Optional non-secret runtime vars:
+
+| Variable | Description |
+|----------|-------------|
+| `API_SIGNATURE_REQUIRED` | Leave as `true` for public deployments unless you intentionally need unsigned machine requests during a migration. |
+| `API_REQUEST_SIGNATURE_TTL_SECONDS` | Optional max age for signed machine requests. Default is `300`. |
+
+## Step 5: Create the `images` Storage Bucket
+
+The article writer uploads hero images into a Supabase Storage bucket named `images`.
+
+1. Go to **Supabase > Storage**
+2. Create a bucket named `images`
+3. Make it **public** if you want article hero images to load directly on the public site
+
+If you skip this, the writer still works, but image upload will fail gracefully and articles will publish without hero images.
+
+## Step 6: Seed Brand Context
 
 After deploying, log into the backend and call the authenticated setup endpoint from that session, or insert the rows directly in Supabase:
 
 `POST https://your-backend-url/api/setup`
 
-## Step 6: Custom Domain (Optional)
+## Step 7: Custom Domain (Optional)
 
 In Cloudflare > your project > Custom Domains > Add Domain. Point `backend.yourdomain.com` to the worker.
 

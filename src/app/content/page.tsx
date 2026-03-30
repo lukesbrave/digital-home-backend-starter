@@ -106,7 +106,7 @@ export default function ContentPipelinePage() {
 
   const saveMode = async (mode: 'safe' | 'autonomous') => {
     setPublishMode(mode);
-    // Save to database so /write-article skill can read it
+    // Save to database so backend automation routes can read it
     try {
       await fetch('/api/settings', {
         method: 'POST',

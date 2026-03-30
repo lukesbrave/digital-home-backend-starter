@@ -15,12 +15,12 @@ async function main() {
 
   // 1. Create content calendar entries at various stages
   const calendarEntries = [
-    { title: "Why Most Consultants Are Building on Rented Land", target_keyword: "digital sovereignty", keyword_cluster: "digital-home", intent_type: "opinion" as const, priority: "high" as const, status: "planned" as const, pillar_topic: "Digital Home", created_by: "content_agent" },
-    { title: "The AUTHOR Framework: How to Build Authority at Scale", target_keyword: "authority building framework", keyword_cluster: "frameworks", intent_type: "how_to" as const, priority: "high" as const, status: "planned" as const, pillar_topic: "AUTHOR Framework", created_by: "content_agent" },
-    { title: "5 Signs You've Outgrown GoHighLevel", target_keyword: "gohighlevel alternative", keyword_cluster: "digital-home", intent_type: "listicle" as const, priority: "medium" as const, status: "planned" as const, pillar_topic: "Digital Home", created_by: "content_agent" },
-    { title: "AI-Native Infrastructure: What It Means for Your Business", target_keyword: "ai native infrastructure", keyword_cluster: "ai-strategy", intent_type: "informational" as const, priority: "high" as const, status: "approved" as const, pillar_topic: "AI Strategy", created_by: "content_agent" },
-    { title: "How to Replace HubSpot With Your Own Digital Home", target_keyword: "hubspot alternative owned", keyword_cluster: "digital-home", intent_type: "how_to" as const, priority: "medium" as const, status: "approved" as const, pillar_topic: "Digital Home", created_by: "content_agent" },
-    { title: "Vibe Marketing: The Death of the Content Calendar", target_keyword: "vibe marketing", keyword_cluster: "vibe-marketing", intent_type: "opinion" as const, priority: "high" as const, status: "writing" as const, pillar_topic: "Vibe Marketing", created_by: "content_agent" },
+    { title: "Why Owned Infrastructure Beats Another SaaS Subscription", target_keyword: "owned business infrastructure", keyword_cluster: "digital-home", intent_type: "opinion" as const, priority: "high" as const, status: "planned" as const, pillar_topic: "Digital Home", created_by: "content_agent" },
+    { title: "How to Build an Authority Engine With AI and Search", target_keyword: "authority building with ai", keyword_cluster: "frameworks", intent_type: "how_to" as const, priority: "high" as const, status: "planned" as const, pillar_topic: "Authority", created_by: "content_agent" },
+    { title: "5 Signs Your Marketing Stack Is Holding Back Growth", target_keyword: "marketing stack audit", keyword_cluster: "digital-home", intent_type: "listicle" as const, priority: "medium" as const, status: "planned" as const, pillar_topic: "Operations", created_by: "content_agent" },
+    { title: "AI-Native Infrastructure: What It Means for a Small Business", target_keyword: "ai native business infrastructure", keyword_cluster: "ai-strategy", intent_type: "informational" as const, priority: "high" as const, status: "approved" as const, pillar_topic: "AI Strategy", created_by: "content_agent" },
+    { title: "How to Replace Tool Sprawl With One Connected System", target_keyword: "replace marketing tool sprawl", keyword_cluster: "digital-home", intent_type: "how_to" as const, priority: "medium" as const, status: "approved" as const, pillar_topic: "Operations", created_by: "content_agent" },
+    { title: "Why Quality Still Matters in an Automated Content Workflow", target_keyword: "automated content workflow", keyword_cluster: "content-strategy", intent_type: "opinion" as const, priority: "high" as const, status: "writing" as const, pillar_topic: "Content Strategy", created_by: "content_agent" },
   ];
 
   const { data: calData, error: calError } = await supabase
@@ -51,10 +51,10 @@ async function main() {
   const { data: seo2, error: seoErr2 } = await supabase
     .from("seo_meta")
     .insert({
-      title: "Digital Home vs GoHighLevel: Why Owning Your Stack Matters",
-      description: "A deep comparison of building your own digital infrastructure versus renting from platforms like GoHighLevel, HubSpot, and WordPress.",
-      target_keyword: "digital home vs gohighlevel",
-      secondary_keywords: ["own your platform", "ghl alternative", "digital sovereignty"],
+      title: "Connected System vs Tool Sprawl: Why Owning Your Stack Matters",
+      description: "A comparison of running one connected system versus stitching together too many marketing tools and rented platforms.",
+      target_keyword: "connected system vs tool sprawl",
+      secondary_keywords: ["own your platform", "marketing stack audit", "tool sprawl"],
       keyword_cluster: "digital-home",
       schema_type: "Article",
     })
@@ -78,7 +78,7 @@ async function main() {
 <p>The real shift isn't about making the old playbook faster. It's about a completely new playbook — one where AI agents don't just assist your marketing, they <em>run</em> it.</p>
 <h2>What an AI-Native Marketing Stack Looks Like</h2>
 <p>Imagine a system where a content agent scans trending topics in your niche every morning, writes and publishes an SEO-optimized article before you've had your coffee, and another agent monitors the performance data to adjust the strategy for tomorrow.</p>
-<p>That's not science fiction. That's what we're building at BraveBrand. And the architecture behind it matters more than the AI models themselves.</p>
+<p>That's not science fiction. More small businesses are building systems like this right now, and the architecture behind them matters more than the AI models themselves.</p>
 <h2>The Three Layers</h2>
 <p>An AI-native marketing stack has three layers:</p>
 <p><strong>1. The Content Layer</strong> — Where articles, case studies, and landing pages live. Not as files in a CMS, but as structured objects in a database with semantic tags, target segments, and associated offers.</p>
@@ -93,34 +93,34 @@ async function main() {
       target_segments: ["new-visitor", "returning-engaged"],
       status: "published" as const,
       created_by: "content_agent" as const,
-      author_name: "Luke Carter",
+      author_name: "Alex Morgan",
       published_at: new Date(Date.now() - 3 * 86400000).toISOString(),
       seo_meta_id: seo1!.id,
     },
     {
-      slug: "digital-home-vs-gohighlevel",
-      title: "Digital Home vs GoHighLevel: Why Owning Your Stack Matters",
+      slug: "connected-system-vs-tool-sprawl",
+      title: "Connected System vs Tool Sprawl: Why Owning Your Stack Matters",
       content_type: "article" as const,
       body: `<h2>The Platform Trap</h2>
-<p>You're paying $297/month for GoHighLevel. Or $800/month for HubSpot. Or some unholy combination of WordPress plugins that breaks every time you update PHP.</p>
-<p>And here's the thing nobody wants to admit: you don't own any of it. Your funnels, your automations, your contact data, your email sequences — they all live on someone else's servers, governed by someone else's terms of service.</p>
+<p>You're paying for one CRM, three marketing tools, two automation platforms, and a website stack held together by duct tape.</p>
+<p>And here's the thing nobody wants to admit: you don't really own any of it. Your funnels, automations, contact data, and email sequences are spread across other companies' servers, governed by other companies' terms of service.</p>
 <p>One API change. One price increase. One "strategic pivot" by the platform. And your entire business infrastructure is at risk.</p>
 <h2>What a Digital Home Actually Is</h2>
 <p>A Digital Home is the opposite of rented infrastructure. It's a self-hosted, fully owned stack that replaces your CRM, your CMS, your email platform, and your analytics dashboard — all running on your own database.</p>
 <p>The public website is the storefront. Behind it sits the backend — your private control room for content, leads, email sequences, and AI agent oversight.</p>
 <h2>The Comparison</h2>
-<p><strong>GoHighLevel</strong> gives you a lot of tools in one place. But you're building on their foundation, locked into their ecosystem, limited by their roadmap.</p>
-<p><strong>A Digital Home</strong> gives you the same capabilities — content management, lead pipelines, email automation, analytics — but you own the code, the data, and the deployment. You can extend it however you want. You can open-source it. You can hand it to a client as their own infrastructure.</p>
+<p><strong>Tool sprawl</strong> gives you a lot of capabilities, but each one lives in a different system, with a different login, a different pricing model, and a different roadmap.</p>
+<p><strong>A connected system</strong> gives you the same capabilities — content management, lead pipelines, email automation, analytics — but you own the code, the data, and the deployment. You can extend it however you want. You can hand it to a client as their own infrastructure.</p>
 <h2>The Real Cost</h2>
 <p>A Digital Home costs more upfront in time and expertise. But the total cost of ownership over 3 years is lower, and you're building equity instead of paying rent.</p>
 <p>More importantly: you can do things a platform can't. AI agents that run autonomously. Personalization engines that adapt per visitor. Knowledge graphs that make your SEO compound over time.</p>
 <p>That's the trade. Convenience now, or sovereignty forever.</p>`,
-      excerpt: "A deep comparison of building your own digital infrastructure versus renting from platforms like GoHighLevel, HubSpot, and WordPress.",
-      semantic_tags: ["digital-home", "gohighlevel", "platform-comparison", "digital-sovereignty"],
+      excerpt: "A comparison of running one connected system versus stitching together too many marketing tools and rented platforms.",
+      semantic_tags: ["digital-home", "tool-sprawl", "platform-comparison", "digital-sovereignty"],
       target_segments: ["new-visitor"],
       status: "draft" as const,
       created_by: "content_agent" as const,
-      author_name: "Luke Carter",
+      author_name: "Alex Morgan",
       seo_meta_id: seo2!.id,
     },
   ];
@@ -141,8 +141,8 @@ async function main() {
   const { error: draftCalErr } = await supabase
     .from("content_calendar")
     .insert({
-      title: "Digital Home vs GoHighLevel: Why Owning Your Stack Matters",
-      target_keyword: "digital home vs gohighlevel",
+      title: "Connected System vs Tool Sprawl: Why Owning Your Stack Matters",
+      target_keyword: "connected system vs tool sprawl",
       keyword_cluster: "digital-home",
       intent_type: "comparison" as const,
       priority: "high" as const,

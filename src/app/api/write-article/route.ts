@@ -231,6 +231,11 @@ export async function POST(request: NextRequest) {
   const auth = await authenticateSessionOrApiKey(request);
   if (!auth.authenticated) return unauthorizedResponse(auth.error);
 
+  const triggerSource =
+    auth.mode === "api-key"
+      ? { auth_mode: "api-key", triggered_by: auth.agent }
+      : { auth_mode: "session", triggered_by: auth.userId };
+
   const body = await request.json();
   let { calendar_entry_id } = body;
   const publish_mode = body.publish_mode;
@@ -599,6 +604,11 @@ Return a JSON object with EXACTLY these fields:
         status: "completed",
         target_table: "content_objects",
         target_id: articleResult?.id,
+        input_data: {
+          ...triggerSource,
+          calendar_entry_id,
+          requested_publish_mode: publish_mode || null,
+        },
         output_data: {
           title: articleData.title,
           slug: publishPayload.slug,

@@ -2,8 +2,8 @@
  * GET/POST /api/settings — Read/write backend settings
  *
  * Uses a simple key-value approach in the backend_settings table.
- * Primary use: storing publish_mode (safe/autonomous) so the
- * /write-article Claude Code skill can read it.
+ * Primary use: storing publish_mode and automation config so
+ * backend routes can read them.
  *
  * If the backend_settings table doesn't exist yet, falls back to
  * returning defaults. The table can be created with:
@@ -22,6 +22,24 @@ import { createAdminClient } from "@/lib/supabase/server";
 
 const DEFAULTS: Record<string, unknown> = {
   publish_mode: "safe",
+  trend_scan_config: {
+    domains: [
+      "content marketing",
+      "brand strategy",
+      "marketing automation",
+      "creator economy",
+      "AI tools for business",
+    ],
+    keyword_clusters: ["authority", "seo", "ai", "growth", "offers", "emerging"],
+    audience_description:
+      "Founders, consultants, and service businesses using content to build authority and attract clients.",
+    include_terms: ["2026", "strategy", "tool", "trend"],
+    exclude_terms: ["stocks", "sports", "celebrity", "politics"],
+    max_new_entries: 10,
+    max_headlines_per_domain: 5,
+    locale: "en-US",
+    country: "US",
+  },
 };
 
 export async function GET(request: NextRequest) {
