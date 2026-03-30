@@ -2,7 +2,7 @@
 
 The operating system behind a Digital Home — an open-source backend that manages content, leads, email, analytics, and AI agents. A single, owned, agent-native system — no platform lock-in, no monthly SaaS fees for features you could own.
 
-This is the **Backend** (the operating system). Behind every [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) (the public-facing website), this Backend handles everything that happens behind the scenes. Both share the same Supabase database.
+This is the **Backend** (the operating system). Behind every [Digital Home Frontend](https://github.com/lukesbrave/digital-home-starter) (the public-facing website), this Backend handles everything that happens behind the scenes. Both share the same Supabase database.
 
 ```
 ┌─────────────────────────┐     ┌─────────────────────────┐
@@ -55,7 +55,7 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/lukesbrave/digital-home-backend.git
+   git clone https://github.com/lukesbrave/digital-home-backend-starter.git
    cd digital-home-backend
    npm install
    ```
@@ -107,7 +107,7 @@ The part the code can't give you is the **brand intelligence** that makes it wor
 
 ## Related
 
-- [Digital Home Frontend](https://github.com/lukesbrave/digital-home-frontend) — the public-facing storefront
+- [Digital Home Frontend](https://github.com/lukesbrave/digital-home-starter) — the public-facing storefront
 - [CLAUDE.md](./CLAUDE.md) — full technical documentation
 
 ## License

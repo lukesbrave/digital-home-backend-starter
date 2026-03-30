@@ -18,7 +18,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-const EMAIL = "luke@bravebrand.com";
+const EMAIL = process.argv[3] || "admin@yourdomain.com";
 const PASSWORD = process.argv[2];
 
 if (!PASSWORD) {

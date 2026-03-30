@@ -28,7 +28,7 @@
   "observability": {
     "enabled": true
   },
-  // Non-secret env vars. Secrets (API keys) are set via Cloudflare dashboard.
+  // Non-secret env vars. Secrets (API keys) are set via `wrangler secret put`.
   "vars": {
     "SUPABASE_URL": "https://your-project.supabase.co",
     "SUPABASE_ANON_KEY": "your-anon-key",
