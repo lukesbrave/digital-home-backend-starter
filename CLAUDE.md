@@ -4,6 +4,18 @@
 
 If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend Starter](https://github.com/lukesbrave/digital-home-starter) repo. **Set up the Frontend first** — it has the shared website migrations.
 
+### Recommended Setup Flow
+
+1. Create one parent folder on your machine called `digital-home`
+2. Open that folder in Claude Code
+3. Do the Frontend setup in **Chat 1**
+4. Do the Backend setup in **Chat 2**
+5. Use the **same Supabase project** for both repos
+
+Using a separate chat for each repo helps Claude stay in the correct project context and avoids confusion between frontend and backend files, migrations, and environment variables.
+
+Before continuing backend setup, confirm Claude is working inside `digital-home-backend-starter` and using the same Supabase project as the Frontend.
+
 ### Step 1: Supabase + Migrations (Frontend First)
 If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all Frontend migrations (`001` through `011`), and create an admin user. Then run this repo's migration:
 

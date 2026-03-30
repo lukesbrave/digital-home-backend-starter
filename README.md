@@ -45,6 +45,16 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 
 ## Getting Started
 
+### Recommended Setup Flow
+
+1. Create one parent folder on your machine called `digital-home`
+2. Open that folder in Claude Code
+3. In **Chat 1**, paste the Frontend Starter repo and complete the frontend setup first
+4. In **Chat 2**, paste this Backend Starter repo and complete the backend setup second
+5. Use the **same Supabase project** for both repos
+
+Using a separate chat for each repo helps Claude stay in the correct project context and avoids confusion between frontend and backend files, migrations, and environment variables.
+
 ### Prerequisites
 - Node.js 18+
 - A [Supabase](https://supabase.com) project (same one as your Frontend)
@@ -59,6 +69,8 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
    cd digital-home-backend-starter
    npm install
    ```
+
+   Before continuing, make sure Claude is working inside `digital-home-backend-starter` and using the same Supabase project as the Frontend.
 
 2. **Set up environment variables**
    ```bash
