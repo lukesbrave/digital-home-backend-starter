@@ -2,7 +2,7 @@
 
 The operating system behind a Digital Home — an open-source backend that manages content, leads, email, analytics, and AI agents. A single, owned, agent-native system — no platform lock-in, no monthly SaaS fees for features you could own.
 
-This is the **Backend** (the operating system). Behind every [Digital Home Frontend](https://github.com/lukesbrave/digital-home-starter) (the public-facing website), this Backend handles everything that happens behind the scenes. Both share the same Supabase database.
+This is the **Backend** (the operating system). Behind every [Digital Home Frontend](https://github.com/lukesbrave/digital-home-fontend-starter) (the public-facing website), this Backend handles everything that happens behind the scenes. Both share the same Supabase database.
 
 ```
 ┌─────────────────────────┐     ┌─────────────────────────┐
@@ -83,7 +83,7 @@ Using a separate chat for each repo helps Claude stay in the correct project con
 
 4. **Run the migrations in the right order**
    Use the same Supabase project as the Frontend.
-   - First run Frontend migrations `001` through `011` from `digital-home-starter/supabase/migrations/`
+   - First run Frontend migrations `001` through `011` from `digital-home-fontend-starter/supabase/migrations/`
    - Then run `supabase/migrations/001_backend_core.sql` from this repo
 
 5. **Update `wrangler.jsonc` before deployment**
@@ -147,7 +147,7 @@ The part the code can't fully give you is the **brand intelligence** that makes 
 
 ## Related
 
-- [Digital Home Frontend](https://github.com/lukesbrave/digital-home-starter) — the public-facing storefront
+- [Digital Home Frontend](https://github.com/lukesbrave/digital-home-fontend-starter) — the public-facing storefront
 - [CLAUDE.md](./CLAUDE.md) — full technical documentation
 
 ## License

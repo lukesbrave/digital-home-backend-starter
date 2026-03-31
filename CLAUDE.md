@@ -2,7 +2,7 @@
 
 ## First Time Setup
 
-If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend Starter](https://github.com/lukesbrave/digital-home-starter) repo. **Set up the Frontend first** — it has the shared website migrations.
+If you just cloned this repo, follow these steps in order. You need both this repo (Backend) and the [Digital Home Frontend Starter](https://github.com/lukesbrave/digital-home-fontend-starter) repo. **Set up the Frontend first** — it has the shared website migrations.
 
 ### Recommended Setup Flow
 
