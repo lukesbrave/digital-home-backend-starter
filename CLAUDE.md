@@ -96,43 +96,51 @@ If you skip this step, article writing still works, but image uploads will fail 
 
 ### Step 6: Deploy to Cloudflare
 
-> **⚠️ `wrangler.jsonc` and git:** The repo ships with placeholder values in `wrangler.jsonc` (for open-source cloners). Your real Supabase URL, anon key, and domain are set **locally only** and must NOT be committed back to git. If `wrangler.jsonc` shows up in `git status` as modified, that's expected — leave it uncommitted. If you accidentally commit it, revert with `git checkout HEAD -- wrangler.jsonc` after deploying.
+The user should have already:
+1. Pushed this repo to their own GitHub
+2. Connected the GitHub repo to Cloudflare (Workers & Pages > Create > Connect to Git)
+3. Set the build command to `npm run build && npx opennextjs-cloudflare build` and deploy command to `npx wrangler deploy`
+4. Completed the first build (it will deploy but login won't work yet — that's expected)
 
-```bash
-npm run build
-npm run deploy
-```
-Before deploying, update `wrangler.jsonc` with your own Worker name, the `WORKER_SELF_REFERENCE.service` value, and your runtime URLs.
+Ask the user for:
+- Their **Backend Worker URL** (shown in Cloudflare dashboard after first deploy, e.g., `https://digital-home-backend.username.workers.dev`)
+- Their **Backend Worker project name** (whatever they named it in Cloudflare)
+- Their **Frontend Worker URL** (the live frontend URL they already deployed)
 
-Then set server-side secrets:
-```bash
-wrangler secret put SUPABASE_SERVICE_ROLE_KEY
-wrangler secret put API_SECRET_KEY
-wrangler secret put ANTHROPIC_API_KEY
-wrangler secret put OPENAI_API_KEY
-wrangler secret put DIGITAL_HOME_URL
-wrangler secret put SUPABASE_URL
-wrangler secret put SUPABASE_ANON_KEY
-```
-When prompted, paste ONLY the value (not the variable name).
+Then do the following automatically:
 
-### Step 7: Verify Everything Works
-Log into the Backend, then visit `https://your-backend-url.com/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
+1. **Update `wrangler.jsonc`** — read the values from `.env.local` and update:
+   - `name` → their Cloudflare Worker project name
+   - `services[0].service` → same Worker project name (the self-reference must match)
+   - `vars.SUPABASE_URL` → the real `SUPABASE_URL` from `.env.local`
+   - `vars.SUPABASE_ANON_KEY` → the real `SUPABASE_ANON_KEY` from `.env.local`
+   - `vars.NEXT_PUBLIC_SUPABASE_URL` → the real `NEXT_PUBLIC_SUPABASE_URL` from `.env.local`
+   - `vars.NEXT_PUBLIC_SUPABASE_ANON_KEY` → the real `NEXT_PUBLIC_SUPABASE_ANON_KEY` from `.env.local`
+   - `vars.DIGITAL_HOME_URL` → the user's live Frontend URL
+   - `vars.NEXT_PUBLIC_DIGITAL_HOME_URL` → same Frontend URL
 
-For GitHub Actions and other automations, the machine-auth flow is:
-- `x-api-key` — shared secret
-- `x-timestamp` — current Unix timestamp in seconds
-- `x-signature` — HMAC-SHA256 of `METHOD:PATH:TIMESTAMP:RAW_BODY`
+2. **Commit and push** — this triggers a Cloudflare rebuild with real values
 
-The Frontend Starter workflows already generate those headers automatically.
+3. **Set server-side secrets** — run these commands, reading each value from `.env.local`:
+   ```bash
+   echo "VALUE" | npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY --name WORKER_NAME
+   echo "VALUE" | npx wrangler secret put API_SECRET_KEY --name WORKER_NAME
+   echo "VALUE" | npx wrangler secret put ANTHROPIC_API_KEY --name WORKER_NAME
+   echo "VALUE" | npx wrangler secret put OPENAI_API_KEY --name WORKER_NAME
+   ```
+   Replace VALUE with the actual values from `.env.local` and WORKER_NAME with their Worker project name.
 
-### Step 8: Run the Full Publishing Check
-Verify the full cross-repo loop in this order:
-1. Run `weekly-trends.yml` from the Frontend Starter repo
-2. Confirm new ideas appear in `content_calendar`
-3. Approve one topic in the Backend dashboard
-4. Run `daily-publish.yml`
-5. Confirm the article appears in the Frontend blog as a draft or published post, based on your publish mode
+4. **Verify** — ask the user to visit their Backend Worker URL and confirm login works
+
+### Step 7: Verify Frontend Connection
+After login works, visit `https://BACKEND_URL/api/test-frontend` to check the Backend→Frontend connection. You should see `api_key_set: true` and `status: 200`.
+
+If `status` is `401`, the `API_SECRET_KEY` doesn't match between Backend and Frontend — re-set it on both Workers.
+
+### Step 8: Test the Publishing Loop
+1. Approve a topic in the content calendar
+2. Click "Write Article" 
+3. Confirm the article appears in the Frontend blog (as draft or published, based on publish mode)
 
 ---
 
