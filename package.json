@@ -4,7 +4,7 @@
   "private": true,
   "description": "The Digital Home Platform — an open-source operating system for your digital presence. Content pipeline, lead management, email sequences, analytics, and agent oversight.",
   "scripts": {
-    "build": "next build",
+    "build": "next build && opennextjs-cloudflare build",
     "dev": "next dev --turbopack -p 3001",
     "start": "next start",
     "lint": "eslint",
