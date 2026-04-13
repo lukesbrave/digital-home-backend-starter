@@ -5,17 +5,34 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
 const API_KEY = process.env.API_SECRET_KEY || "";
+
+/**
+ * Fetch from the Frontend Worker using service binding (bypasses Workers-to-Workers routing).
+ */
+function frontendFetch(path: string, init?: RequestInit): Promise<Response> {
+  try {
+    const ctx = getCloudflareContext();
+    const binding = (ctx.env as Record<string, unknown>).FRONTEND_WORKER as { fetch: (req: Request) => Promise<Response> } | undefined;
+    if (binding) {
+      return binding.fetch(new Request(`${FRONTEND_URL}${path}`, init));
+    }
+  } catch {
+    // Local dev — no Cloudflare context
+  }
+  return fetch(`${FRONTEND_URL}${path}`, init);
+}
 
 export async function GET(request: NextRequest) {
   const auth = await authenticateSession(request);
   if (!auth.authenticated) return unauthorizedResponse(auth.error);
 
   try {
-    const res = await fetch(`${FRONTEND_URL}/api/content?status=published&limit=1`, {
+    const res = await frontendFetch("/api/content?status=published&limit=1", {
       headers: {
         "Content-Type": "application/json",
         "x-api-key": API_KEY,

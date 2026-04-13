@@ -15,11 +15,29 @@ import { authenticateSessionOrApiKey, unauthorizedResponse } from "@/lib/api/aut
 import { createAdminClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import OpenAI from "openai";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
 const API_KEY = process.env.API_SECRET_KEY || "";
+
+/**
+ * Fetch from the Frontend Worker using the service binding (bypasses Workers-to-Workers routing issues).
+ * Falls back to global fetch for local dev where no service binding exists.
+ */
+function frontendFetch(path: string, init?: RequestInit): Promise<Response> {
+  try {
+    const ctx = getCloudflareContext();
+    const binding = (ctx.env as Record<string, unknown>).FRONTEND_WORKER as { fetch: (req: Request) => Promise<Response> } | undefined;
+    if (binding) {
+      return binding.fetch(new Request(`${FRONTEND_URL}${path}`, init));
+    }
+  } catch {
+    // Local dev — no Cloudflare context available
+  }
+  return fetch(`${FRONTEND_URL}${path}`, init);
+}
 
 // ─── Brand context loader ────────────────────────────────────────────────────
 
@@ -65,8 +83,8 @@ async function fetchPublishedSlugs(): Promise<
   { slug: string; title: string }[]
 > {
   try {
-    const res = await fetch(
-      `${FRONTEND_URL}/api/content?status=published&limit=20`,
+    const res = await frontendFetch(
+      "/api/content?status=published&limit=20",
       { headers: { "x-api-key": API_KEY } }
     );
     if (!res.ok) return [];
@@ -528,7 +546,7 @@ Return a JSON object with EXACTLY these fields:
 
     let articleResult: { id?: string; slug?: string } | null = null;
 
-    const publishRes = await fetch(`${FRONTEND_URL}/api/content`, {
+    const publishRes = await frontendFetch("/api/content", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -545,7 +563,7 @@ Return a JSON object with EXACTLY these fields:
         (errData.error && errData.error.includes("duplicate"))
       ) {
         publishPayload.slug = `${articleData.slug}-${Date.now().toString(36).slice(-4)}`;
-        const retryRes = await fetch(`${FRONTEND_URL}/api/content`, {
+        const retryRes = await frontendFetch("/api/content", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -591,7 +609,7 @@ Return a JSON object with EXACTLY these fields:
       .eq("id", calendar_entry_id);
 
     // 9. Log the action (non-blocking)
-    fetch(`${FRONTEND_URL}/api/agent-logs`, {
+    frontendFetch("/api/agent-logs", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

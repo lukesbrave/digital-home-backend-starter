@@ -14,6 +14,10 @@
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "digital-home-backend"
+    },
+    {
+      "binding": "FRONTEND_WORKER",
+      "service": "digital-home-frontend"
     }
   ],
   "images": {

@@ -99,19 +99,21 @@ If you skip this step, article writing still works, but image uploads will fail 
 The user should have already:
 1. Pushed this repo to their own GitHub
 2. Connected the GitHub repo to Cloudflare (Workers & Pages > Create > Connect to Git)
-3. Set the build command to `npm run build && npx opennextjs-cloudflare build` and deploy command to `npx wrangler deploy`
+3. Used the default build command (`npm run build`) and deploy command (`npx wrangler deploy`)
 4. Completed the first build (it will deploy but login won't work yet — that's expected)
 
 Ask the user for:
 - Their **Backend Worker URL** (shown in Cloudflare dashboard after first deploy, e.g., `https://digital-home-backend.username.workers.dev`)
 - Their **Backend Worker project name** (whatever they named it in Cloudflare)
+- Their **Frontend Worker project name** (whatever they named the frontend in Cloudflare)
 - Their **Frontend Worker URL** (the live frontend URL they already deployed)
 
 Then do the following automatically:
 
 1. **Update `wrangler.jsonc`** — read the values from `.env.local` and update:
-   - `name` → their Cloudflare Worker project name
-   - `services[0].service` → same Worker project name (the self-reference must match)
+   - `name` → their Backend Worker project name
+   - `services[0].service` (WORKER_SELF_REFERENCE) → same Backend Worker project name
+   - `services[1].service` (FRONTEND_WORKER) → their Frontend Worker project name (this is a service binding that lets the backend call the frontend directly — without it, Worker-to-Worker requests fail with 404)
    - `vars.SUPABASE_URL` → the real `SUPABASE_URL` from `.env.local`
    - `vars.SUPABASE_ANON_KEY` → the real `SUPABASE_ANON_KEY` from `.env.local`
    - `vars.NEXT_PUBLIC_SUPABASE_URL` → the real `NEXT_PUBLIC_SUPABASE_URL` from `.env.local`
