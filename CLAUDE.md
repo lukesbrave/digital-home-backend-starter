@@ -99,7 +99,7 @@ If you skip this step, article writing still works, but image uploads will fail 
 npm run build
 npm run deploy
 ```
-Before deploying, update `wrangler.jsonc` with your own Worker name, the `WORKER_SELF_REFERENCE.service` value, the R2 cache bucket name, and your runtime URLs.
+Before deploying, update `wrangler.jsonc` with your own Worker name, the `WORKER_SELF_REFERENCE.service` value, and your runtime URLs.
 
 Then set server-side secrets:
 ```bash

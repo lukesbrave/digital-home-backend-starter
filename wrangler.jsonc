@@ -16,12 +16,6 @@
       "service": "digital-home-backend"
     }
   ],
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "digital-home-backend-opennext-cache"
-    }
-  ],
   "images": {
     "binding": "IMAGES"
   },
