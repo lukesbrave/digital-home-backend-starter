@@ -16,6 +16,9 @@ Using a separate chat for each repo helps Claude stay in the correct project con
 
 Before continuing backend setup, confirm Claude is working inside `digital-home-backend-starter` and using the same Supabase project as the Frontend.
 
+### Step 0: Check for Node.js
+Before anything else, check if the user has Node.js installed by running `node -v`. If the command fails or is not found, walk them through installing it: go to [nodejs.org](https://nodejs.org), download the LTS version, and run the installer. They need Node.js to run this project.
+
 ### Step 1: Supabase + Migrations (Frontend First)
 If you haven't already, follow the Frontend CLAUDE.md Steps 1-3 to create your Supabase project, run all Frontend migrations (`001` through `011`), and create an admin user. Then run this repo's migration:
 
