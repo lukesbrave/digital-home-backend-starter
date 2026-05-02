@@ -36,7 +36,7 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 
 ## Tech Stack
 
-- **Framework:** Next.js 15 (App Router, TypeScript)
+- **Framework:** Next.js 16 (App Router, TypeScript)
 - **Styling:** Tailwind CSS v4
 - **Database:** Supabase (PostgreSQL) — shared with the Frontend
 - **Auth:** Supabase Auth (email/password, no public signup)
@@ -56,7 +56,7 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 Using a separate chat for each repo helps Claude stay in the correct project context and avoids confusion between frontend and backend files, migrations, and environment variables.
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22+
 - A [Supabase](https://supabase.com) project (same one as your Frontend)
 - A [Cloudflare](https://cloudflare.com) account
 - API keys: Supabase, Anthropic, OpenAI
