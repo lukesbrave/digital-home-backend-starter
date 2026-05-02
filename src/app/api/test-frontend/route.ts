@@ -17,7 +17,7 @@ const API_KEY = process.env.API_SECRET_KEY || "";
 function frontendFetch(path: string, init?: RequestInit): Promise<Response> {
   try {
     const ctx = getCloudflareContext();
-    const binding = (ctx.env as Record<string, unknown>).FRONTEND_WORKER as { fetch: (req: Request) => Promise<Response> } | undefined;
+    const binding = ctx.env.FRONTEND_WORKER;
     if (binding) {
       return binding.fetch(new Request(`${FRONTEND_URL}${path}`, init));
     }
