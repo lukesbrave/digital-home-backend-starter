@@ -56,7 +56,7 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 Using a separate chat for each repo helps Claude stay in the correct project context and avoids confusion between frontend and backend files, migrations, and environment variables.
 
 ### Prerequisites
-- Node.js 20.9+
+- Node.js 22+
 - A [Supabase](https://supabase.com) project (same one as your Frontend)
 - A [Cloudflare](https://cloudflare.com) account
 - API keys: Supabase, Anthropic, OpenAI
