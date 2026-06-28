@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authenticateSession, unauthorizedResponse } from "@/lib/api/auth";
+import { authenticateSessionOrApiKey, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -14,7 +14,7 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 };
 
 export async function PATCH(request: NextRequest, context: RouteContext) {
-  const auth = await authenticateSession(request);
+  const auth = await authenticateSessionOrApiKey(request);
   if (!auth.authenticated) return unauthorizedResponse(auth.error);
 
   const { id } = await context.params;
