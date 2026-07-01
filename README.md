@@ -40,7 +40,7 @@ This is the **Backend** (the operating system). Behind every [Digital Home Front
 - **Styling:** Tailwind CSS v4
 - **Database:** Supabase (PostgreSQL) — shared with the Frontend
 - **Auth:** Supabase Auth (email/password, no public signup)
-- **AI:** Anthropic Claude (article writing), OpenAI DALL-E (hero images)
+- **AI:** Anthropic Claude (article writing), OpenAI image model (hero images)
 - **Deployment:** Cloudflare Workers via OpenNext
 
 ## Getting Started

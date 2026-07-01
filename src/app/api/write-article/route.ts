@@ -21,6 +21,7 @@ import { getCloudflareContext } from "@opennextjs/cloudflare";
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
 const API_KEY = process.env.API_SECRET_KEY || "";
+const OPENAI_IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
 
 /**
  * Fetch from the Frontend Worker using the service binding (bypasses Workers-to-Workers routing issues).
@@ -103,6 +104,15 @@ async function fetchPublishedSlugs(): Promise<
 
 // ─── Hero image generation ───────────────────────────────────────────────────
 
+function base64ToArrayBuffer(value: string): ArrayBuffer {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
 async function generateHeroImage(
   title: string,
   keyword: string,
@@ -132,21 +142,29 @@ CRITICAL RULES:
 - ABSOLUTELY NO TEXT. No words, letters, numbers, logos, watermarks, or signatures
 - No stock photo clichés (no handshakes, no people pointing at screens, no thumbs up)`;
 
+    const isDalleModel = OPENAI_IMAGE_MODEL.startsWith("dall-e");
     const response = await openai.images.generate({
-      model: "dall-e-3",
+      model: OPENAI_IMAGE_MODEL,
       prompt: imagePrompt,
       n: 1,
-      size: "1792x1024",
-      quality: "hd",
-    });
+      size: isDalleModel ? "1792x1024" : "1536x1024",
+      quality: isDalleModel ? "hd" : "high",
+      ...(isDalleModel ? { response_format: "url" } : {}),
+    } as Parameters<typeof openai.images.generate>[0]);
 
-    const imageUrl = response.data?.[0]?.url;
-    if (!imageUrl) return null;
-
-    // Download the image and upload to Supabase Storage
-    const imageRes = await fetch(imageUrl);
-    if (!imageRes.ok) return null;
-    const imageBuffer = await imageRes.arrayBuffer();
+    const imageResponse = response as unknown as {
+      data?: Array<{ b64_json?: string | null; url?: string | null }>;
+    };
+    const generated = imageResponse.data?.[0];
+    let imageBuffer: ArrayBuffer | null = null;
+    if (generated?.b64_json) {
+      imageBuffer = base64ToArrayBuffer(generated.b64_json);
+    } else if (generated?.url) {
+      const imageRes = await fetch(generated.url);
+      if (!imageRes.ok) return null;
+      imageBuffer = await imageRes.arrayBuffer();
+    }
+    if (!imageBuffer) return null;
 
     const supabase = createAdminClient();
     const fileName = `blog/${slug}-hero.png`;

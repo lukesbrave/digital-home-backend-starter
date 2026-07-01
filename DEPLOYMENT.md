@@ -82,7 +82,7 @@ echo "your-value" | npx wrangler secret put DIGITAL_HOME_URL
 | `SUPABASE_ANON_KEY` | Duplicate of the anon key for server-side access |
 | `API_SECRET_KEY` | Shared secret between Frontend and Backend (must match both) |
 | `ANTHROPIC_API_KEY` | Anthropic API key for AI article writing |
-| `OPENAI_API_KEY` | OpenAI API key for DALL-E hero images |
+| `OPENAI_API_KEY` | OpenAI API key for hero images |
 | `DIGITAL_HOME_URL` | Your public frontend URL (e.g., `https://yourdomain.com`) |
 
 Secrets set via Wrangler take effect immediately — no rebuild needed.
@@ -93,6 +93,7 @@ Optional non-secret runtime vars:
 |----------|-------------|
 | `API_SIGNATURE_REQUIRED` | Leave as `true` for public deployments unless you intentionally need unsigned machine requests during a migration. |
 | `API_REQUEST_SIGNATURE_TTL_SECONDS` | Optional max age for signed machine requests. Default is `300`. |
+| `OPENAI_IMAGE_MODEL` | Optional hero-image model override. Defaults to `gpt-image-1`. |
 
 ## Step 5: Create the `images` Storage Bucket
 
