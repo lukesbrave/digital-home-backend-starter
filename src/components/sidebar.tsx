@@ -14,6 +14,15 @@ const NAV_ITEMS = [
     ),
   },
   {
+    href: '/brand-wiki',
+    label: 'Wiki',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 256 256" fill="currentColor">
+        <path d="M208,24H72A32,32,0,0,0,40,56V224a8,8,0,0,0,8,8H192a8,8,0,0,0,0-16H56a16,16,0,0,1,16-16H208a8,8,0,0,0,8-8V32A8,8,0,0,0,208,24Zm-8,160H72a31.82,31.82,0,0,0-16,4.29V56A16,16,0,0,1,72,40H200Z" />
+      </svg>
+    ),
+  },
+  {
     href: '#',
     label: 'Leads',
     disabled: true,
@@ -75,8 +84,8 @@ export function Sidebar() {
     <aside className="w-20 shrink-0 border-r border-minimal-border flex flex-col items-center py-6 gap-8">
       {/* Logo */}
       <div className="flex items-center justify-center mb-4">
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white">
-          Brave
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-minimal-accent">
+          Orloff&apos;s
         </span>
       </div>
 
@@ -92,10 +101,10 @@ export function Sidebar() {
               href={isDisabled ? '#' : item.href}
               className={`flex flex-col items-center gap-1.5 transition-colors ${
                 isActive
-                  ? 'text-white'
+                  ? 'text-minimal-accent'
                   : isDisabled
                   ? 'cursor-default opacity-35'
-                  : 'text-minimal-muted hover:text-white'
+                  : 'text-minimal-muted hover:text-minimal-accent'
               }`}
               onClick={isDisabled ? (e) => e.preventDefault() : undefined}
             >
