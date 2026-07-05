@@ -14,14 +14,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { authenticateSessionOrApiKey, unauthorizedResponse } from "@/lib/api/auth";
 import { createAdminClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
-import OpenAI from "openai";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 
 const FRONTEND_URL =
   process.env.DIGITAL_HOME_URL || "http://localhost:3000";
 const API_KEY = process.env.API_SECRET_KEY || "";
-const OPENAI_IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
+const FAL_IMAGE_MODEL = process.env.FAL_IMAGE_MODEL || "fal-ai/flux/schnell";
 
 /**
  * Fetch from the Frontend Worker using the service binding (bypasses Workers-to-Workers routing issues).
@@ -104,26 +103,15 @@ async function fetchPublishedSlugs(): Promise<
 
 // ─── Hero image generation ───────────────────────────────────────────────────
 
-function base64ToArrayBuffer(value: string): ArrayBuffer {
-  const binary = atob(value);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-
 async function generateHeroImage(
   title: string,
   keyword: string,
   slug: string,
   imageStyle?: string
 ): Promise<string | null> {
-  if (!process.env.OPENAI_API_KEY) return null;
+  if (!process.env.FAL_KEY) return null;
 
   try {
-    const openai = new OpenAI();
-
     // Default style if none configured in brand_context
     const defaultStyle = `Editorial photography style. Clean, modern, professional.
 Composition: Minimal, intentional. One clear subject or metaphor that relates to the article topic.
@@ -142,37 +130,52 @@ CRITICAL RULES:
 - ABSOLUTELY NO TEXT. No words, letters, numbers, logos, watermarks, or signatures
 - No stock photo clichés (no handshakes, no people pointing at screens, no thumbs up)`;
 
-    const isDalleModel = OPENAI_IMAGE_MODEL.startsWith("dall-e");
-    const response = await openai.images.generate({
-      model: OPENAI_IMAGE_MODEL,
-      prompt: imagePrompt,
-      n: 1,
-      size: isDalleModel ? "1792x1024" : "1536x1024",
-      quality: isDalleModel ? "hd" : "high",
-      ...(isDalleModel ? { response_format: "url" } : {}),
-    } as Parameters<typeof openai.images.generate>[0]);
+    // fal.ai synchronous image generation (https://docs.fal.ai)
+    const falRes = await fetch(`https://fal.run/${FAL_IMAGE_MODEL}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Key ${process.env.FAL_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt: imagePrompt,
+        image_size: "landscape_16_9",
+        num_images: 1,
+      }),
+    });
 
-    const imageResponse = response as unknown as {
-      data?: Array<{ b64_json?: string | null; url?: string | null }>;
-    };
-    const generated = imageResponse.data?.[0];
-    let imageBuffer: ArrayBuffer | null = null;
-    if (generated?.b64_json) {
-      imageBuffer = base64ToArrayBuffer(generated.b64_json);
-    } else if (generated?.url) {
-      const imageRes = await fetch(generated.url);
-      if (!imageRes.ok) return null;
-      imageBuffer = await imageRes.arrayBuffer();
+    if (!falRes.ok) {
+      console.error(
+        "fal.ai image request failed:",
+        falRes.status,
+        await falRes.text()
+      );
+      return null;
     }
-    if (!imageBuffer) return null;
+
+    const falData = (await falRes.json()) as {
+      images?: Array<{ url?: string; content_type?: string }>;
+    };
+    const generated = falData.images?.[0];
+    if (!generated?.url) return null;
+
+    const imageRes = await fetch(generated.url);
+    if (!imageRes.ok) return null;
+    const imageBuffer = await imageRes.arrayBuffer();
+
+    const contentType =
+      generated.content_type ||
+      imageRes.headers.get("content-type") ||
+      "image/jpeg";
+    const ext = contentType.includes("png") ? "png" : "jpg";
 
     const supabase = createAdminClient();
-    const fileName = `blog/${slug}-hero.png`;
+    const fileName = `blog/${slug}-hero.${ext}`;
 
     const { error: uploadError } = await supabase.storage
       .from("images")
       .upload(fileName, imageBuffer, {
-        contentType: "image/png",
+        contentType,
         upsert: true,
       });
 
