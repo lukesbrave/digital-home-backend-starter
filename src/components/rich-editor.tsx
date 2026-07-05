@@ -19,7 +19,7 @@ export function RichEditor({ content, onChange, editable = true }: RichEditorPro
       }),
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: { class: 'text-white underline underline-offset-2' },
+        HTMLAttributes: { class: 'text-minimal-accent underline underline-offset-2' },
       }),
     ],
     content,
@@ -126,8 +126,8 @@ function ToolbarBtn({ active, onClick, label, bold, italic }: {
       onClick={onClick}
       className={`px-2.5 py-1 text-[11px] uppercase tracking-wider rounded-sm transition-colors ${
         active
-          ? 'bg-white text-black'
-          : 'text-minimal-muted hover:text-white'
+          ? 'bg-minimal-accent text-minimal-bg'
+          : 'text-minimal-muted hover:text-minimal-accent'
       } ${bold ? 'font-bold' : ''} ${italic ? 'italic' : ''}`}
     >
       {label}

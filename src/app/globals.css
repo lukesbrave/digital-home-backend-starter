@@ -6,12 +6,12 @@
 @source "../../src";
 
 @theme {
-  /* Ultra-minimal palette */
-  --color-minimal-bg: #000000;
-  --color-minimal-border: #262626;
-  --color-minimal-muted: #737373;
-  --color-minimal-accent: #ffffff;
-  --color-minimal-row: #090909;
+  /* Ultra-minimal palette — light mode */
+  --color-minimal-bg: #ffffff;
+  --color-minimal-border: #e5e5e5;
+  --color-minimal-muted: #6b7280;
+  --color-minimal-accent: #111111;
+  --color-minimal-row: #f7f7f7;
 
   /* Status dot colors */
   --color-status-planned: #525252;
@@ -128,32 +128,32 @@ a {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #1a1a1a; }
-::-webkit-scrollbar-thumb:hover { background: #525252; }
+::-webkit-scrollbar-thumb { background: #d4d4d4; }
+::-webkit-scrollbar-thumb:hover { background: #a3a3a3; }
 
 /* Tiptap editor styles */
-.prose-editor h2 { font-size: 1.2rem; font-weight: 500; margin: 2rem 0 0.75rem; color: #e5e5e5; }
-.prose-editor h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.5rem; color: #d4d4d4; }
-.prose-editor p { margin-bottom: 1rem; line-height: 1.8; color: #a3a3a3; font-size: 17px; font-weight: 300; }
-.prose-editor a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
-.prose-editor strong { color: #e5e5e5; font-weight: 500; }
+.prose-editor h2 { font-size: 1.2rem; font-weight: 500; margin: 2rem 0 0.75rem; color: #1f2937; }
+.prose-editor h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.5rem; color: #374151; }
+.prose-editor p { margin-bottom: 1rem; line-height: 1.8; color: #4b5563; font-size: 17px; font-weight: 300; }
+.prose-editor a { color: #111; text-decoration: underline; text-underline-offset: 2px; }
+.prose-editor strong { color: #1f2937; font-weight: 500; }
 .prose-editor em { font-style: italic; }
-.prose-editor ul, .prose-editor ol { margin: 0.75rem 0 1rem 1.25rem; color: #a3a3a3; }
+.prose-editor ul, .prose-editor ol { margin: 0.75rem 0 1rem 1.25rem; color: #4b5563; }
 .prose-editor li { margin-bottom: 0.35rem; line-height: 1.7; }
-.prose-editor blockquote { border-left: 2px solid #262626; padding-left: 1rem; margin: 1rem 0; color: #737373; font-style: italic; }
-.prose-editor p.is-editor-empty:first-child::before { content: 'Start writing...'; color: #262626; float: left; height: 0; pointer-events: none; }
+.prose-editor blockquote { border-left: 2px solid #e5e5e5; padding-left: 1rem; margin: 1rem 0; color: #6b7280; font-style: italic; }
+.prose-editor p.is-editor-empty:first-child::before { content: 'Start writing...'; color: #cbd5e1; float: left; height: 0; pointer-events: none; }
 .tiptap:focus { outline: none; }
 
 /* Article preview HTML content */
-.article-preview h1 { font-size: 1.5rem; font-weight: 300; margin-bottom: 1rem; color: #fff; }
-.article-preview h2 { font-size: 1.2rem; font-weight: 400; margin: 2rem 0 0.75rem; color: #e5e5e5; }
-.article-preview h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.5rem; color: #d4d4d4; }
-.article-preview p { margin-bottom: 1rem; line-height: 1.8; color: #a3a3a3; }
-.article-preview a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
-.article-preview strong { color: #e5e5e5; font-weight: 500; }
-.article-preview ul, .article-preview ol { margin: 0.75rem 0 1rem 1.25rem; color: #a3a3a3; }
+.article-preview h1 { font-size: 1.5rem; font-weight: 300; margin-bottom: 1rem; color: #111; }
+.article-preview h2 { font-size: 1.2rem; font-weight: 400; margin: 2rem 0 0.75rem; color: #1f2937; }
+.article-preview h3 { font-size: 1rem; font-weight: 500; margin: 1.5rem 0 0.5rem; color: #374151; }
+.article-preview p { margin-bottom: 1rem; line-height: 1.8; color: #4b5563; }
+.article-preview a { color: #111; text-decoration: underline; text-underline-offset: 2px; }
+.article-preview strong { color: #1f2937; font-weight: 500; }
+.article-preview ul, .article-preview ol { margin: 0.75rem 0 1rem 1.25rem; color: #4b5563; }
 .article-preview li { margin-bottom: 0.35rem; line-height: 1.7; }
-.article-preview blockquote { border-left: 1px solid #262626; padding-left: 1rem; margin: 1rem 0; color: #737373; font-style: italic; }
+.article-preview blockquote { border-left: 1px solid #e5e5e5; padding-left: 1rem; margin: 1rem 0; color: #6b7280; font-style: italic; }
 
 @theme inline {
   --font-heading: var(--font-sans);

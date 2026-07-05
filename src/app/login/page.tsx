@@ -33,17 +33,20 @@ export default function LoginPage() {
       <form onSubmit={handleLogin} className="w-full max-w-[360px] px-10">
         {/* Logo */}
         <div className="mb-16">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white mb-6" viewBox="0 0 256 256" fill="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-minimal-accent mb-6" viewBox="0 0 256 256" fill="currentColor">
             <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200Z" />
           </svg>
-          <h1 className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-400">
-            Digital Home
+          <h1 className="text-sm font-semibold uppercase tracking-[0.2em] text-minimal-accent">
+            Orloff&apos;s
           </h1>
+          <p className="mt-1.5 text-[10px] uppercase tracking-[0.2em] text-neutral-500">
+            The Clear View Creators
+          </p>
         </div>
 
         {/* Email */}
         <div className="mb-6">
-          <label htmlFor="email" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500 mb-2">
+          <label htmlFor="email" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-500 mb-2">
             Email
           </label>
           <input
@@ -52,13 +55,13 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full bg-transparent border border-zinc-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500 transition-colors"
+            className="w-full bg-transparent border border-minimal-border px-3 py-2.5 text-sm text-minimal-accent focus:outline-none focus:border-neutral-400 transition-colors"
           />
         </div>
 
         {/* Password */}
         <div className="mb-8">
-          <label htmlFor="password" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-500 mb-2">
+          <label htmlFor="password" className="block text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-500 mb-2">
             Password
           </label>
           <input
@@ -67,7 +70,7 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="w-full bg-transparent border border-zinc-700 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-zinc-500 transition-colors"
+            className="w-full bg-transparent border border-minimal-border px-3 py-2.5 text-sm text-minimal-accent focus:outline-none focus:border-neutral-400 transition-colors"
           />
         </div>
 
@@ -80,7 +83,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 bg-white text-black text-xs font-medium uppercase tracking-widest rounded-sm disabled:opacity-30 transition-opacity"
+          className="w-full py-2.5 bg-minimal-accent text-minimal-bg text-xs font-medium uppercase tracking-widest rounded-sm disabled:opacity-30 transition-opacity"
         >
           {loading ? 'Signing in...' : 'Sign In'}
         </button>

@@ -219,7 +219,7 @@ export default function BrandWikiPage() {
       {/* Footer */}
       <footer className="h-16 px-12 flex items-center justify-between text-[10px] text-minimal-muted uppercase tracking-[0.2em] shrink-0">
         <span>v0.1</span>
-        <span>Digital Home / Brand Wiki</span>
+        <span>Orloff&apos;s - The Clear View Creators / Brand Wiki</span>
       </footer>
     </div>
   );

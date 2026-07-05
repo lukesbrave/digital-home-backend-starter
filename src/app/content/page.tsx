@@ -144,7 +144,7 @@ export default function ContentPipelinePage() {
           <button
             onClick={() => setView('board')}
             className={`text-xs font-medium tracking-widest uppercase transition-colors ${
-              view === 'board' ? 'text-white' : 'text-minimal-muted hover:text-white'
+              view === 'board' ? 'text-minimal-accent' : 'text-minimal-muted hover:text-minimal-accent'
             }`}
           >
             Pipeline
@@ -152,7 +152,7 @@ export default function ContentPipelinePage() {
           <button
             onClick={() => setView('list')}
             className={`text-xs font-medium tracking-widest uppercase transition-colors ${
-              view === 'list' ? 'text-white' : 'text-minimal-muted hover:text-white'
+              view === 'list' ? 'text-minimal-accent' : 'text-minimal-muted hover:text-minimal-accent'
             }`}
           >
             Articles
@@ -172,7 +172,7 @@ export default function ContentPipelinePage() {
           }`} />
           <div>
             <span className={`text-xs font-medium uppercase tracking-widest ${
-              publishMode === 'autonomous' ? 'text-green-500' : 'text-white'
+              publishMode === 'autonomous' ? 'text-green-500' : 'text-minimal-accent'
             }`}>
               {publishMode === 'autonomous' ? 'Autonomous' : 'Safe Mode'}
             </span>
@@ -188,7 +188,7 @@ export default function ContentPipelinePage() {
           className={`text-[10px] font-medium uppercase tracking-widest px-4 py-2 border rounded-sm transition-colors ${
             publishMode === 'autonomous'
               ? 'border-green-500/30 text-green-500 hover:bg-green-500/10'
-              : 'border-minimal-border text-minimal-muted hover:text-white hover:border-minimal-muted'
+              : 'border-minimal-border text-minimal-muted hover:text-minimal-accent hover:border-minimal-muted'
           }`}
         >
           {publishMode === 'autonomous' ? 'Switch to Safe' : 'Enable Autonomous'}
@@ -200,7 +200,7 @@ export default function ContentPipelinePage() {
       {/* Footer */}
       <footer className="h-16 px-12 flex items-center justify-between text-[10px] text-minimal-muted uppercase tracking-[0.2em] shrink-0">
         <span>v0.1</span>
-        <span>Digital Home / {view === 'board' ? 'Pipeline' : 'Articles'}</span>
+        <span>Orloff&apos;s - The Clear View Creators / {view === 'board' ? 'Pipeline' : 'Articles'}</span>
       </footer>
 
       {/* Autonomous Mode Confirmation Modal */}
@@ -220,25 +220,25 @@ export default function ContentPipelinePage() {
             <div className="flex flex-col gap-5 mb-10">
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
-                  New topics from content strategy will be <span className="text-white">auto-approved</span> — skipping the Planned stage entirely
+                <p className="text-[13px] text-neutral-500 leading-relaxed">
+                  New topics from content strategy will be <span className="text-minimal-accent">auto-approved</span> — skipping the Planned stage entirely
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
-                  Articles will be <span className="text-white">published directly</span> — no draft review step
+                <p className="text-[13px] text-neutral-500 leading-relaxed">
+                  Articles will be <span className="text-minimal-accent">published directly</span> — no draft review step
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-minimal-muted mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-[13px] text-neutral-500 leading-relaxed">
                   You can still edit or unpublish any article after the fact
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-minimal-muted mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-[13px] text-neutral-500 leading-relaxed">
                   Switch back to Safe Mode at any time
                 </p>
               </div>
@@ -247,13 +247,13 @@ export default function ContentPipelinePage() {
             <div className="flex items-center justify-end gap-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="text-xs font-medium uppercase tracking-widest text-minimal-muted hover:text-white transition-colors px-4 py-2"
+                className="text-xs font-medium uppercase tracking-widest text-minimal-muted hover:text-minimal-accent transition-colors px-4 py-2"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmAutonomous}
-                className="text-xs font-medium uppercase tracking-widest bg-white text-black px-6 py-2.5 rounded-sm"
+                className="text-xs font-medium uppercase tracking-widest bg-minimal-accent text-minimal-bg px-6 py-2.5 rounded-sm"
               >
                 Enable Autonomous
               </button>
@@ -604,7 +604,7 @@ function DraggableCard({
       {/* Title — clickable link to editor if article exists */}
       {entry.content_objects?.slug ? (
         <Link href={`/content/${entry.content_objects.slug}`} className="block">
-          <p className="text-[14px] leading-relaxed mb-3 font-light hover:text-white transition-colors underline-offset-4 hover:underline">
+          <p className="text-[14px] leading-relaxed mb-3 font-light hover:text-minimal-accent transition-colors underline-offset-4 hover:underline">
             {entry.title}
           </p>
         </Link>
@@ -662,7 +662,7 @@ function DraggableCard({
           {entry.status === 'planned' && (
             <button
               onClick={(e) => { e.stopPropagation(); onApprove(); }}
-              className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+              className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-minimal-accent transition-colors"
             >
               Approve
             </button>
@@ -671,7 +671,7 @@ function DraggableCard({
             <button
               onClick={(e) => { e.stopPropagation(); onWriteNow(); }}
               disabled={!!writing}
-              className="text-[10px] uppercase tracking-widest text-white hover:text-green-400 transition-colors disabled:opacity-40"
+              className="text-[10px] uppercase tracking-widest text-minimal-accent hover:text-green-400 transition-colors disabled:opacity-40"
             >
               Write Now
             </button>
@@ -681,7 +681,7 @@ function DraggableCard({
               {entry.content_objects?.slug && (
                 <Link
                   href={`/content/${entry.content_objects.slug}`}
-                  className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+                  className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-minimal-accent transition-colors"
                 >
                   Preview
                 </Link>
@@ -699,7 +699,7 @@ function DraggableCard({
             <>
               <Link
                 href={`/content/${entry.content_objects.slug}`}
-                className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+                className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-minimal-accent transition-colors"
               >
                 Edit
               </Link>
