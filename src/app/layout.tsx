@@ -17,13 +17,20 @@ export const metadata: Metadata = {
   robots: 'noindex, nofollow',
 };
 
+// Runs before paint: applies the persisted theme (default dark) to <html>
+// so there is no flash of the wrong theme.
+const THEME_SCRIPT = `try{var t=localStorage.getItem("dh-theme");document.documentElement.classList.toggle("dark",t!=="light")}catch(e){document.documentElement.classList.add("dark")}`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("dark", "font-sans", geist.variable)}>
+    <html lang="en" suppressHydrationWarning className={cn("dark", "font-sans", geist.variable)}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className={`${geist.variable} ${geistMono.variable} bg-minimal-bg text-white font-sans h-screen w-screen overflow-hidden flex antialiased`}>
         <Sidebar />
         <main className="flex-1 flex flex-col h-full overflow-hidden">

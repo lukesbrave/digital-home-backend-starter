@@ -278,3 +278,79 @@ a {
     @apply font-sans;
   }
 }
+/* ── Light theme ──────────────────────────────────────────────────────────────
+   The dashboard was designed on black; light mode works by re-pointing the
+   CSS variables every utility class references (Tailwind v4). The zinc scale
+   is mirrored (300↔700 etc.) and white/black swap, so existing markup needs
+   no per-page changes. Toggled by removing the `dark` class from <html>. */
+html:not(.dark) {
+  /* minimal palette */
+  --color-minimal-bg: #ffffff;
+  --color-minimal-border: #e4e4e7;
+  --color-minimal-muted: #6e6e78;
+  --color-minimal-accent: #0a0a0a;
+  --color-minimal-row: #f7f7f8;
+
+  /* core inversions */
+  --color-white: #0a0a0a;
+  --color-black: #ffffff;
+
+  /* mirrored zinc scale, tuned so secondary/meta text stays readable on white */
+  --color-zinc-100: #18181b;
+  --color-zinc-200: #27272a;
+  --color-zinc-300: #3f3f46;
+  --color-zinc-400: #52525b;
+  --color-zinc-500: #6b6b76;
+  --color-zinc-600: #7c7c87;
+  --color-zinc-700: #d4d4d8;
+  --color-zinc-800: #e4e4e7;
+  --color-zinc-900: #f4f4f5;
+
+  /* accents tuned for legibility on white */
+  --color-green-300: #166534;
+  --color-green-400: #16a34a;
+  --color-green-500: #15803d;
+  --color-yellow-400: #a16207;
+  --color-yellow-500: #ca8a04;
+  --color-red-400: #dc2626;
+  --color-violet-400: #7c3aed;
+  --color-blue-400: #2563eb;
+  --color-emerald-300: #047857;
+  --color-emerald-400: #059669;
+  --color-emerald-500: #059669;
+
+  /* status dots (content board) */
+  --color-status-planned: #a1a1aa;
+  --color-status-draft: #a1a1aa;
+  --color-status-archived: #d4d4d8;
+}
+
+/* Dark mode legibility tuning — brightens the most-used secondary/meta tones
+   a notch above stock zinc so small text reads clearly on pure black. */
+.dark {
+  --color-minimal-muted: #8b8b94;
+  --color-minimal-row: #0e0e10;
+  --color-zinc-500: #82828c;
+  --color-zinc-600: #70707a;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb { background: #d4d4d8; }
+html:not(.dark) ::-webkit-scrollbar-thumb:hover { background: #a1a1aa; }
+
+html:not(.dark) .prose-editor h2 { color: #27272a; }
+html:not(.dark) .prose-editor h3 { color: #3f3f46; }
+html:not(.dark) .prose-editor p { color: #52525b; }
+html:not(.dark) .prose-editor a { color: #0a0a0a; }
+html:not(.dark) .prose-editor strong { color: #27272a; }
+html:not(.dark) .prose-editor ul, html:not(.dark) .prose-editor ol { color: #52525b; }
+html:not(.dark) .prose-editor blockquote { border-left-color: #e4e4e7; color: #71717a; }
+html:not(.dark) .prose-editor p.is-editor-empty:first-child::before { color: #d4d4d8; }
+
+html:not(.dark) .article-preview h1 { color: #0a0a0a; }
+html:not(.dark) .article-preview h2 { color: #27272a; }
+html:not(.dark) .article-preview h3 { color: #3f3f46; }
+html:not(.dark) .article-preview p { color: #52525b; }
+html:not(.dark) .article-preview a { color: #0a0a0a; }
+html:not(.dark) .article-preview strong { color: #27272a; }
+html:not(.dark) .article-preview ul, html:not(.dark) .article-preview ol { color: #52525b; }
+html:not(.dark) .article-preview blockquote { border-left-color: #e4e4e7; color: #71717a; }

@@ -124,7 +124,7 @@ function ToolbarBtn({ active, onClick, label, bold, italic }: {
   return (
     <button
       onClick={onClick}
-      className={`px-2.5 py-1 text-[11px] uppercase tracking-wider rounded-sm transition-colors ${
+      className={`px-2.5 py-1 text-xs rounded-lg transition-colors ${
         active
           ? 'bg-white text-black'
           : 'text-minimal-muted hover:text-white'

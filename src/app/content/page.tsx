@@ -137,13 +137,13 @@ export default function ContentPipelinePage() {
     <div className="flex flex-col h-full">
       {/* Header */}
       <header className="h-20 px-12 flex items-center justify-between shrink-0">
-        <h1 className="text-sm font-medium tracking-widest uppercase text-minimal-muted">
+        <h1 className="text-lg font-semibold text-white">
           {view === 'board' ? 'Pipeline' : 'Articles'}
         </h1>
         <div className="flex items-center gap-6">
           <button
             onClick={() => setView('board')}
-            className={`text-xs font-medium tracking-widest uppercase transition-colors ${
+            className={`text-[13px] font-medium transition-colors ${
               view === 'board' ? 'text-white' : 'text-minimal-muted hover:text-white'
             }`}
           >
@@ -151,7 +151,7 @@ export default function ContentPipelinePage() {
           </button>
           <button
             onClick={() => setView('list')}
-            className={`text-xs font-medium tracking-widest uppercase transition-colors ${
+            className={`text-[13px] font-medium transition-colors ${
               view === 'list' ? 'text-white' : 'text-minimal-muted hover:text-white'
             }`}
           >
@@ -171,12 +171,12 @@ export default function ContentPipelinePage() {
             publishMode === 'autonomous' ? 'bg-green-500' : 'bg-minimal-muted'
           }`} />
           <div>
-            <span className={`text-xs font-medium uppercase tracking-widest ${
+            <span className={`text-xs font-medium ${
               publishMode === 'autonomous' ? 'text-green-500' : 'text-white'
             }`}>
               {publishMode === 'autonomous' ? 'Autonomous' : 'Safe Mode'}
             </span>
-            <p className="text-[11px] text-minimal-muted mt-0.5">
+            <p className="text-xs text-minimal-muted mt-0.5">
               {publishMode === 'autonomous'
                 ? 'AI approves topics and publishes articles automatically'
                 : 'Articles require manual review before publishing'}
@@ -185,7 +185,7 @@ export default function ContentPipelinePage() {
         </div>
         <button
           onClick={handleModeToggle}
-          className={`text-[10px] font-medium uppercase tracking-widest px-4 py-2 border rounded-sm transition-colors ${
+          className={`text-xs font-medium px-4 py-2 border rounded-lg transition-colors ${
             publishMode === 'autonomous'
               ? 'border-green-500/30 text-green-500 hover:bg-green-500/10'
               : 'border-minimal-border text-minimal-muted hover:text-white hover:border-minimal-muted'
@@ -198,7 +198,7 @@ export default function ContentPipelinePage() {
       {view === 'board' ? <BoardView digitalHomeUrl={digitalHomeUrl} /> : <ListView />}
 
       {/* Footer */}
-      <footer className="h-16 px-12 flex items-center justify-between text-[10px] text-minimal-muted uppercase tracking-[0.2em] shrink-0">
+      <footer className="h-16 px-12 flex items-center justify-between text-xs text-minimal-muted shrink-0">
         <span>v0.1</span>
         <span>Digital Home / {view === 'board' ? 'Pipeline' : 'Articles'}</span>
       </footer>
@@ -213,32 +213,32 @@ export default function ContentPipelinePage() {
           />
           {/* Modal */}
           <div className="relative w-full max-w-md border border-minimal-border bg-minimal-bg p-10">
-            <h2 className="text-sm font-medium uppercase tracking-widest mb-8">
+            <h2 className="text-base font-semibold text-white mb-8">
               Switch to Autonomous Mode?
             </h2>
 
             <div className="flex flex-col gap-5 mb-10">
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-400 leading-relaxed">
                   New topics from content strategy will be <span className="text-white">auto-approved</span> — skipping the Planned stage entirely
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-400 leading-relaxed">
                   Articles will be <span className="text-white">published directly</span> — no draft review step
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-minimal-muted mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-400 leading-relaxed">
                   You can still edit or unpublish any article after the fact
                 </p>
               </div>
               <div className="flex gap-3">
                 <div className="w-1.5 h-1.5 rounded-full bg-minimal-muted mt-1.5 shrink-0" />
-                <p className="text-[13px] text-zinc-400 leading-relaxed">
+                <p className="text-sm text-zinc-400 leading-relaxed">
                   Switch back to Safe Mode at any time
                 </p>
               </div>
@@ -247,13 +247,13 @@ export default function ContentPipelinePage() {
             <div className="flex items-center justify-end gap-4">
               <button
                 onClick={() => setShowModal(false)}
-                className="text-xs font-medium uppercase tracking-widest text-minimal-muted hover:text-white transition-colors px-4 py-2"
+                className="text-[13px] font-semibold text-zinc-300 hover:text-white transition-colors px-4 py-2"
               >
                 Cancel
               </button>
               <button
                 onClick={confirmAutonomous}
-                className="text-xs font-medium uppercase tracking-widest bg-white text-black px-6 py-2.5 rounded-sm"
+                className="text-xs font-medium bg-white text-black px-6 py-2.5 rounded-lg"
               >
                 Enable Autonomous
               </button>
@@ -469,7 +469,7 @@ function BoardView({ digitalHomeUrl }: { digitalHomeUrl: string }) {
             isDragging={!!activeId}
           >
             {grouped[status].length === 0 ? (
-              <div className="text-[10px] text-minimal-muted/40 uppercase tracking-widest text-center py-8">
+              <div className="text-xs text-minimal-muted/40 text-center py-8">
                 {activeId && validTargets.includes(status) ? 'Drop here' : 'Empty'}
               </div>
             ) : (
@@ -531,13 +531,13 @@ function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`w-72 shrink-0 flex flex-col gap-4 border rounded-sm p-2 -m-2 transition-colors ${columnClass}`}
+      className={`w-72 shrink-0 flex flex-col gap-4 border rounded-lg p-2 -m-2 transition-colors ${columnClass}`}
     >
       <div className="flex items-center justify-between border-b border-minimal-border pb-3 px-1">
-        <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-minimal-muted">
+        <span className="text-xs font-medium capitalize text-minimal-muted">
           {id}
         </span>
-        <span className="text-[10px] text-minimal-muted">{count}</span>
+        <span className="text-xs text-minimal-muted">{count}</span>
       </div>
       <div className="flex flex-col gap-3 overflow-y-auto flex-1 px-3 -mx-3">
         {children}
@@ -597,7 +597,7 @@ function DraggableCard({
       {isWriting && <WritingGlow />}
       {/* NEW badge for recently published articles */}
       {isNew && (
-        <span className="absolute top-3 right-3 text-[9px] font-semibold uppercase tracking-widest text-green-500 bg-green-500/10 px-2 py-0.5 rounded-sm">
+        <span className="absolute top-3 right-3 text-xs font-semibold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-lg">
           New
         </span>
       )}
@@ -620,11 +620,11 @@ function DraggableCard({
           <div className={`w-1.5 h-1.5 rounded-full ${entry.status === 'published' ? STATUS_DOT_COLORS.published : PRIORITY_DOTS[entry.priority]}`} title={entry.status === 'published' ? 'published' : entry.priority} />
         )}
         {entry.target_keyword ? (
-          <span className="text-[10px] uppercase tracking-wider text-minimal-muted">
+          <span className="text-xs text-minimal-muted">
             {entry.target_keyword}
           </span>
         ) : (
-          <span className="text-[10px] uppercase tracking-wider text-minimal-muted">
+          <span className="text-xs text-minimal-muted">
             {timeAgo(entry.created_at)}
           </span>
         )}
@@ -635,7 +635,7 @@ function DraggableCard({
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] uppercase tracking-widest text-emerald-500">
+            <span className="text-xs text-emerald-500">
               {isBeingWritten ? 'Writing with AI...' : 'Agent writing...'}
             </span>
           </div>
@@ -643,7 +643,7 @@ function DraggableCard({
           {!isBeingWritten && (
             <button
               onClick={(e) => { e.stopPropagation(); onReset(); }}
-              className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-red-400 transition-colors"
+              className="text-xs text-minimal-muted hover:text-red-400 transition-colors"
               title="Reset stuck article back to Approved"
             >
               Reset
@@ -662,7 +662,7 @@ function DraggableCard({
           {entry.status === 'planned' && (
             <button
               onClick={(e) => { e.stopPropagation(); onApprove(); }}
-              className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+              className="text-xs text-minimal-muted hover:text-white transition-colors"
             >
               Approve
             </button>
@@ -671,7 +671,7 @@ function DraggableCard({
             <button
               onClick={(e) => { e.stopPropagation(); onWriteNow(); }}
               disabled={!!writing}
-              className="text-[10px] uppercase tracking-widest text-white hover:text-green-400 transition-colors disabled:opacity-40"
+              className="text-xs text-white hover:text-green-400 transition-colors disabled:opacity-40"
             >
               Write Now
             </button>
@@ -681,7 +681,7 @@ function DraggableCard({
               {entry.content_objects?.slug && (
                 <Link
                   href={`/content/${entry.content_objects.slug}`}
-                  className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+                  className="text-xs text-minimal-muted hover:text-white transition-colors"
                 >
                   Preview
                 </Link>
@@ -689,7 +689,7 @@ function DraggableCard({
               <button
                 onClick={(e) => { e.stopPropagation(); onPublish(); }}
                 disabled={publishing === entry.id}
-                className="text-[10px] uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors disabled:opacity-40"
+                className="text-xs text-green-500 hover:text-green-400 transition-colors disabled:opacity-40"
               >
                 {publishing === entry.id ? 'Publishing...' : 'Publish'}
               </button>
@@ -699,7 +699,7 @@ function DraggableCard({
             <>
               <Link
                 href={`/content/${entry.content_objects.slug}`}
-                className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors"
+                className="text-xs text-minimal-muted hover:text-white transition-colors"
               >
                 Edit
               </Link>
@@ -708,7 +708,7 @@ function DraggableCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 referrerPolicy="no-referrer"
-                className="text-[10px] uppercase tracking-widest text-green-500 hover:text-green-400 transition-colors"
+                className="text-xs text-green-500 hover:text-green-400 transition-colors"
               >
                 View →
               </a>
@@ -765,7 +765,7 @@ function ListView() {
                   </span>
                 </div>
                 <div className="w-32 flex justify-end">
-                  <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-minimal-muted group-hover:text-minimal-accent transition-colors">
+                  <span className="text-xs font-medium capitalize text-minimal-muted group-hover:text-minimal-accent transition-colors">
                     {article.status}
                   </span>
                 </div>

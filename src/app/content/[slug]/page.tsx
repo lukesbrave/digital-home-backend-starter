@@ -171,7 +171,7 @@ export default function ArticleEditorPage() {
     return (
       <div className="flex-1 flex flex-col items-center justify-center gap-4">
         <p className="text-minimal-muted text-sm">Article not found</p>
-        <button onClick={() => router.back()} className="text-[10px] uppercase tracking-widest text-minimal-muted hover:text-white transition-colors">
+        <button onClick={() => router.back()} className="text-xs text-minimal-muted hover:text-white transition-colors">
           ← Back
         </button>
       </div>
@@ -183,19 +183,19 @@ export default function ArticleEditorPage() {
       {/* Toast notification */}
       {toast && (
         <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-50 ${toast.exiting ? 'toast-exit' : 'toast-enter'}`}>
-          <div className={`px-6 py-3 rounded-sm border flex items-center gap-4 ${
+          <div className={`px-6 py-3 rounded-lg border flex items-center gap-4 ${
             toast.type === 'success'
               ? 'border-green-500/30 bg-green-500/10 text-green-400'
               : 'border-minimal-border bg-minimal-row text-minimal-muted'
           }`}>
             <div className={`w-1.5 h-1.5 rounded-full ${toast.type === 'success' ? 'bg-green-500' : 'bg-minimal-muted'}`} />
-            <span className="text-[11px] font-medium uppercase tracking-widest">{toast.message}</span>
+            <span className="text-xs font-medium">{toast.message}</span>
             {toast.link && (
               <a
                 href={toast.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[11px] font-medium uppercase tracking-widest text-white hover:text-green-300 transition-colors"
+                className="text-xs font-medium text-white hover:text-green-300 transition-colors"
               >
                 View →
               </a>
@@ -212,19 +212,19 @@ export default function ArticleEditorPage() {
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256">
               <path d="M165.66,202.34a8,8,0,0,1-11.32,11.32l-80-80a8,8,0,0,1,0-11.32l80-80a8,8,0,0,1,11.32,11.32L91.31,128Z" />
             </svg>
-            <span className="text-[10px] font-medium uppercase tracking-widest">Back</span>
+            <span className="text-xs font-medium">Back</span>
           </button>
           <div className="h-4 w-px bg-minimal-border" />
           <div className="flex items-center gap-2">
             <div className={`w-1.5 h-1.5 rounded-full ${STATUS_DOT[article.status]}`} />
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-minimal-muted">
+            <span className="text-xs font-medium capitalize text-minimal-muted">
               {article.status}
             </span>
           </div>
           {article.published_at && (
             <>
               <div className="h-4 w-px bg-minimal-border" />
-              <span className="text-[10px] uppercase tracking-widest text-minimal-muted">
+              <span className="text-xs text-minimal-muted">
                 {new Date(article.published_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
               </span>
             </>
@@ -237,20 +237,20 @@ export default function ArticleEditorPage() {
             <>
               <button
                 onClick={() => setShowMeta(!showMeta)}
-                className={`text-[10px] font-medium tracking-widest uppercase transition-colors ${showMeta ? 'text-white' : 'text-minimal-muted hover:text-white'}`}
+                className={`text-[13px] font-medium transition-colors ${showMeta ? 'text-white' : 'text-minimal-muted hover:text-white'}`}
               >
                 Meta
               </button>
               <button
                 onClick={startEditing}
-                className="text-[10px] font-medium tracking-widest uppercase text-minimal-muted hover:text-white transition-colors"
+                className="text-[13px] font-medium text-minimal-muted hover:text-white transition-colors"
               >
                 Edit
               </button>
               {article.status === 'published' && (
                 <button
                   onClick={() => updateStatus('draft')}
-                  className="text-[10px] font-medium tracking-widest uppercase text-yellow-500 hover:text-yellow-400 transition-colors"
+                  className="text-[13px] font-medium text-yellow-500 hover:text-yellow-400 transition-colors"
                 >
                   Unpublish
                 </button>
@@ -258,7 +258,7 @@ export default function ArticleEditorPage() {
               {article.status === 'draft' && (
                 <button
                   onClick={() => updateStatus('published')}
-                  className="text-[10px] font-medium tracking-widest uppercase bg-white text-black px-4 py-1.5 rounded-sm"
+                  className="text-[13px] font-medium bg-white text-black px-4 py-1.5 rounded-lg"
                 >
                   Publish
                 </button>
@@ -268,7 +268,7 @@ export default function ArticleEditorPage() {
                   href={`${DIGITAL_HOME_URL}/blog/${article.slug}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-medium tracking-widest uppercase border border-minimal-border text-white px-4 py-1.5 rounded-sm hover:border-minimal-muted transition-colors"
+                  className="text-[13px] font-medium border border-minimal-border text-white px-4 py-1.5 rounded-lg hover:border-minimal-muted transition-colors"
                 >
                   View Site →
                 </a>
@@ -278,14 +278,14 @@ export default function ArticleEditorPage() {
             <>
               <button
                 onClick={() => setEditing(false)}
-                className="text-[10px] font-medium tracking-widest uppercase text-minimal-muted hover:text-white transition-colors"
+                className="text-[13px] font-medium text-minimal-muted hover:text-white transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={saveChanges}
                 disabled={saving}
-                className="text-[10px] font-medium tracking-widest uppercase bg-white text-black px-4 py-1.5 rounded-sm disabled:opacity-40"
+                className="text-[13px] font-medium bg-white text-black px-4 py-1.5 rounded-lg disabled:opacity-40"
               >
                 {saving ? 'Saving...' : 'Save'}
               </button>
@@ -348,7 +348,7 @@ export default function ArticleEditorPage() {
                       className="w-full bg-transparent border border-minimal-border p-2 text-xs text-zinc-300 resize-none focus:outline-none focus:border-minimal-muted"
                     />
                   ) : (
-                    <p className="text-[13px] text-zinc-400 leading-relaxed">
+                    <p className="text-sm text-zinc-400 leading-relaxed">
                       {article.excerpt || 'No excerpt'}
                     </p>
                   )}
@@ -367,12 +367,12 @@ export default function ArticleEditorPage() {
                     <div className="flex gap-2 flex-wrap">
                       {article.semantic_tags.length > 0 ? (
                         article.semantic_tags.map((tag) => (
-                          <span key={tag} className="text-[11px] uppercase tracking-wider text-zinc-400 border border-minimal-border px-2.5 py-1">
+                          <span key={tag} className="text-xs text-zinc-400 border border-minimal-border px-2.5 py-1">
                             {tag}
                           </span>
                         ))
                       ) : (
-                        <span className="text-[13px] text-minimal-muted/40">No tags</span>
+                        <span className="text-sm text-minimal-muted/40">No tags</span>
                       )}
                     </div>
                   )}
@@ -382,7 +382,7 @@ export default function ArticleEditorPage() {
                   <MetaSection title="SEO">
                     {editing ? (
                       <div className="flex flex-col gap-3">
-                        <label className="text-[10px] uppercase tracking-widest text-minimal-muted">
+                        <label className="text-xs text-minimal-muted">
                           Title
                           <input
                             type="text"
@@ -391,7 +391,7 @@ export default function ArticleEditorPage() {
                             className="w-full bg-transparent border border-minimal-border p-2 mt-1 text-xs text-zinc-300 focus:outline-none focus:border-minimal-muted"
                           />
                         </label>
-                        <label className="text-[10px] uppercase tracking-widest text-minimal-muted">
+                        <label className="text-xs text-minimal-muted">
                           Description
                           <textarea
                             value={editSeoDescription}
@@ -400,7 +400,7 @@ export default function ArticleEditorPage() {
                             className="w-full bg-transparent border border-minimal-border p-2 mt-1 text-xs text-zinc-300 resize-none focus:outline-none focus:border-minimal-muted"
                           />
                         </label>
-                        <label className="text-[10px] uppercase tracking-widest text-minimal-muted">
+                        <label className="text-xs text-minimal-muted">
                           Keyword
                           <input
                             type="text"
@@ -431,7 +431,7 @@ export default function ArticleEditorPage() {
       </div>
 
       {/* Footer */}
-      <footer className="h-16 px-12 flex items-center justify-between text-[10px] text-minimal-muted uppercase tracking-[0.2em] border-t border-minimal-border shrink-0">
+      <footer className="h-16 px-12 flex items-center justify-between text-xs text-minimal-muted border-t border-minimal-border shrink-0">
         <div className="flex gap-8">
           <span>{editing ? 'Editing' : 'Preview'}</span>
           <span>Words: {wordCount(editing ? editBody : article.body)}</span>
@@ -447,7 +447,7 @@ export default function ArticleEditorPage() {
 function MetaSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-minimal-border pb-5 mb-1">
-      <h3 className="text-[11px] font-medium uppercase tracking-[0.15em] text-minimal-muted mb-4">
+      <h3 className="text-xs font-medium text-minimal-muted mb-4">
         {title}
       </h3>
       {children}
@@ -458,8 +458,8 @@ function MetaSection({ title, children }: { title: string; children: React.React
 function MetaRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="mb-3">
-      <span className="text-[10px] uppercase tracking-widest text-minimal-muted block mb-1">{label}</span>
-      <span className="text-[13px] text-zinc-300 block break-words">{value}</span>
+      <span className="text-xs text-minimal-muted block mb-1">{label}</span>
+      <span className="text-sm text-zinc-300 block break-words">{value}</span>
     </div>
   );
 }
