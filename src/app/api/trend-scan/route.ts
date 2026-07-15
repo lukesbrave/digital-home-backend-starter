@@ -130,6 +130,24 @@ function looksLikeDuplicate(candidate: CandidateEntry, existing: Set<string>): b
   });
 }
 
+const FEED_HEADERS = {
+  "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+  Accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+};
+
+async function fetchRssItems(url: string, label: string): Promise<RegExpMatchArray[]> {
+  const response = await fetch(url, { cache: "no-store", headers: FEED_HEADERS });
+  if (!response.ok) {
+    console.warn(`trend feed ${label} responded ${response.status}`);
+    return [];
+  }
+  const xml = await response.text();
+  const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+  console.log(`trend feed ${label}: ${items.length} items`);
+  return items;
+}
+
 async function fetchTrendFeed(query: string, config: TrendScanConfig): Promise<TrendItem[]> {
   const params = new URLSearchParams({
     q: `${query} ${config.include_terms.join(" ")} when:7d`,
@@ -138,12 +156,19 @@ async function fetchTrendFeed(query: string, config: TrendScanConfig): Promise<T
     ceid: `${config.country}:${config.locale.split("-")[0]}`,
   });
 
-  const url = `https://news.google.com/rss/search?${params.toString()}`;
-  const response = await fetch(url, { cache: "no-store" });
-  if (!response.ok) return [];
-
-  const xml = await response.text();
-  const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+  // Google News often serves Cloudflare Workers a consent page with no items,
+  // so fall back to Bing News RSS (same <item> shape) when Google returns none.
+  let items = await fetchRssItems(
+    `https://news.google.com/rss/search?${params.toString()}`,
+    `google:${query}`
+  );
+  if (items.length === 0) {
+    const bingParams = new URLSearchParams({ q: query, format: "rss" });
+    items = await fetchRssItems(
+      `https://www.bing.com/news/search?${bingParams.toString()}`,
+      `bing:${query}`
+    );
+  }
 
   return items.slice(0, config.max_headlines_per_domain).map((match) => {
     const block = match[1];
