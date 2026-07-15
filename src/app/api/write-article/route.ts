@@ -330,7 +330,14 @@ export async function POST(request: NextRequest) {
     .eq("key", "publish_mode")
     .single();
 
-  const publishMode = publish_mode === "autonomous" || settingsData?.value === "autonomous" ? "autonomous" : "safe";
+  // Explicit caller intent wins (a caller can force "safe" so its drafts
+  // never auto-publish); otherwise fall back to the global setting.
+  const publishMode =
+    publish_mode === "autonomous" || publish_mode === "safe"
+      ? publish_mode
+      : settingsData?.value === "autonomous"
+        ? "autonomous"
+        : "safe";
   const targetStatus = publishMode === "autonomous" ? "published" : "draft";
 
   // 3. Mark as writing
